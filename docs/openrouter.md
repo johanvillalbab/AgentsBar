@@ -24,15 +24,15 @@ export OPENROUTER_API_KEY="sk-or-v1-..."
 
 ### Settings
 
-You can also configure the API key in CodexBar Settings → Providers → OpenRouter.
+You can also configure the API key in AgentsBar Settings → Providers → OpenRouter.
 
 ### CLI config
 
-To monitor multiple OpenRouter accounts, add labeled API keys in the same provider settings. CodexBar fetches each
+To monitor multiple OpenRouter accounts, add labeled API keys in the same provider settings. AgentsBar fetches each
 key independently. Choose the segmented account switcher or stacked account cards under Settings → Display.
 
 ```bash
-printf '%s' "$OPENROUTER_API_KEY" | codexbar config set-api-key --provider openrouter --stdin
+printf '%s' "$OPENROUTER_API_KEY" | agentsbar config set-api-key --provider openrouter --stdin
 ```
 
 ## Data Source
@@ -55,10 +55,10 @@ The OpenRouter menu card shows:
 ## CLI Usage
 
 ```bash
-codexbar --provider openrouter
-codexbar -p or  # alias
-codexbar --provider openrouter --account Personal
-codexbar --provider openrouter --all-accounts --format json --pretty
+agentsbar --provider openrouter
+agentsbar -p or  # alias
+agentsbar --provider openrouter --account Personal
+agentsbar --provider openrouter --all-accounts --format json --pretty
 ```
 
 ## Environment Variables
@@ -68,7 +68,7 @@ codexbar --provider openrouter --all-accounts --format json --pretty
 | `OPENROUTER_API_KEY` | Your OpenRouter API key (required) |
 | `OPENROUTER_API_URL` | Override the base API URL (optional, defaults to `https://openrouter.ai/api/v1`) |
 | `OPENROUTER_HTTP_REFERER` | Optional client referer sent as `HTTP-Referer` header |
-| `OPENROUTER_X_TITLE` | Optional client title sent as `X-Title` header (defaults to `CodexBar`) |
+| `OPENROUTER_X_TITLE` | Optional client title sent as `X-Title` header (defaults to `AgentsBar`) |
 
 ## Notes
 

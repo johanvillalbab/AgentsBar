@@ -10,8 +10,8 @@ read_when:
 
 **Status:** accepted on 2026-07-04
 **Date:** 2026-07-01
-**Issues:** [#1167](https://github.com/steipete/CodexBar/issues/1167),
-[#780](https://github.com/steipete/CodexBar/issues/780)
+**Issues:** [#1167](https://github.com/johanvillalbab/agentsbar/issues/1167),
+[#780](https://github.com/johanvillalbab/agentsbar/issues/780)
 
 ## Decision summary
 
@@ -29,7 +29,7 @@ inference remains a later, separately reviewed opt-in.
 
 ## Current behavior
 
-With multiple providers and Merge Icons enabled, CodexBar creates one merged status item and removes all provider
+With multiple providers and Merge Icons enabled, AgentsBar creates one merged status item and removes all provider
 status items. `primaryProviderForUnifiedIcon()` chooses the merged icon from highest usage, the first Overview
 provider, the selected menu provider, or the first enabled provider. Menu selection is persisted.
 

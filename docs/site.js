@@ -353,7 +353,7 @@ function applyThemePreference(preference, persist = true) {
 
   if (persist) {
     try {
-      localStorage.setItem('codexbar-theme', preference);
+      localStorage.setItem('agentsbar-theme', preference);
     } catch (_) {}
   }
 }
@@ -417,7 +417,7 @@ const localeAliases = {
   pt: 'pt-BR',
   'pt-br': 'pt-BR',
 };
-const languageStorageKey = 'codexbar-language';
+const languageStorageKey = 'agentsbar-language';
 const languagePicker = document.querySelector('#language-picker');
 const languageTrigger = document.querySelector('#language-picker-trigger');
 const languageMenu = document.querySelector('#language-picker-menu');
@@ -461,9 +461,9 @@ function applyAttributeMessages(dataAttribute, targetAttribute) {
 
 function richToken(name) {
   const codeTokens = {
-    cask: 'brew install --cask steipete/tap/codexbar',
-    codexbar: 'codexbar',
-    linuxCommand: 'brew install steipete/tap/codexbar',
+    cask: 'brew install --cask steipete/tap/agentsbar',
+    agentsbar: 'agentsbar',
+    linuxCommand: 'brew install steipete/tap/agentsbar',
     upgrade: 'brew upgrade',
   };
   if (codeTokens[name]) {
@@ -475,14 +475,14 @@ function richToken(name) {
   if (name === 'releases') {
     const link = document.createElement('a');
     link.className = 'text-link';
-    link.href = 'https://github.com/steipete/CodexBar/releases';
+    link.href = 'https://github.com/johanvillalbab/agentsbar/releases';
     link.textContent = 'GitHub Releases';
     return link;
   }
   if (name === 'issue') {
     const link = document.createElement('a');
     link.className = 'text-link';
-    link.href = 'https://github.com/steipete/CodexBar/issues/12';
+    link.href = 'https://github.com/johanvillalbab/agentsbar/issues/12';
     link.textContent = 'issue #12';
     return link;
   }

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
     <channel>
-        <title>CodexBar</title>
+        <title>AgentsBar</title>
         <item>
             <title>0.45.2</title>
             <pubDate>Sun, 19 Jul 2026 18:23:42 +0100</pubDate>
-            <link>https://raw.githubusercontent.com/steipete/CodexBar/main/appcast.xml</link>
+            <link>https://raw.githubusercontent.com/johanvillalbab/agentsbar/main/appcast.xml</link>
             <sparkle:version>109</sparkle:version>
             <sparkle:shortVersionString>0.45.2</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description><![CDATA[<h2>CodexBar 0.45.2</h2>
+            <description><![CDATA[<h2>AgentsBar 0.45.2</h2>
 <h3>Fixed</h3>
 <ul>
 <li>Refresh: prevent macOS 14 launch crashes caused by TaskLocal task-allocation corruption (#2341, fixes #2319 and #2326). Thanks @lzylzylzy130 and @jorgesancha!</li>
@@ -20,18 +20,18 @@
 <li>OpenCode/OpenCode Go: preserve computed sub-1% usage percentages instead of rescaling them as direct fractions (#2331). Thanks @OfficialAbhinavSingh!</li>
 <li>OpenCode Go: prefer local usage for unscoped Auto refreshes while keeping account- and workspace-scoped requests web-first (#2316). Thanks @kiranmagic7!</li>
 </ul>
-<p><a href="https://github.com/steipete/CodexBar/blob/main/CHANGELOG.md">View full changelog</a></p>
+<p><a href="https://github.com/johanvillalbab/agentsbar/blob/main/CHANGELOG.md">View full changelog</a></p>
 ]]></description>
-            <enclosure url="https://github.com/steipete/CodexBar/releases/download/v0.45.2/CodexBar-macos-universal-0.45.2.zip" length="53246326" type="application/octet-stream" sparkle:edSignature="v3yb5YxXTTl3804rUGKooCUr3oFxSLtzA+pSn0ekAcyacuwJr+msYjgggvB28U2LZsivR+NRBzfmyH4G/h3qCA=="/>
+            <enclosure url="https://github.com/johanvillalbab/agentsbar/releases/download/v0.45.2/AgentsBar-macos-universal-0.45.2.zip" length="53246326" type="application/octet-stream" sparkle:edSignature="v3yb5YxXTTl3804rUGKooCUr3oFxSLtzA+pSn0ekAcyacuwJr+msYjgggvB28U2LZsivR+NRBzfmyH4G/h3qCA=="/>
         </item>
         <item>
             <title>0.45.1</title>
             <pubDate>Sun, 19 Jul 2026 08:59:53 +0100</pubDate>
-            <link>https://raw.githubusercontent.com/steipete/CodexBar/main/appcast.xml</link>
+            <link>https://raw.githubusercontent.com/johanvillalbab/agentsbar/main/appcast.xml</link>
             <sparkle:version>108</sparkle:version>
             <sparkle:shortVersionString>0.45.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description><![CDATA[<h2>CodexBar 0.45.1</h2>
+            <description><![CDATA[<h2>AgentsBar 0.45.1</h2>
 <h3>Added</h3>
 <ul>
 <li>Claude: show per-model weekly claude-swap usage windows from schema-v1 account listings (#2310). Thanks @AlexGodard!</li>
@@ -60,23 +60,23 @@
 <ul>
 <li>Serialize the Claude CLI platform-gating cases to prevent nondeterministic Linux CI failures (#2311). Thanks @Chipagosfinest!</li>
 </ul>
-<p><a href="https://github.com/steipete/CodexBar/blob/main/CHANGELOG.md">View full changelog</a></p>
+<p><a href="https://github.com/johanvillalbab/agentsbar/blob/main/CHANGELOG.md">View full changelog</a></p>
 ]]></description>
-            <enclosure url="https://github.com/steipete/CodexBar/releases/download/v0.45.1/CodexBar-macos-universal-0.45.1.zip" length="53227318" type="application/octet-stream" sparkle:edSignature="QyQdkPlko+svg7GhULmoQSxKd0IHNOnWUlpKmL5tXJjC8b+t7HmFR7+6ii7F+F2Si2601gskEJiAj+Vhgi4YBw=="/>
+            <enclosure url="https://github.com/johanvillalbab/agentsbar/releases/download/v0.45.1/AgentsBar-macos-universal-0.45.1.zip" length="53227318" type="application/octet-stream" sparkle:edSignature="QyQdkPlko+svg7GhULmoQSxKd0IHNOnWUlpKmL5tXJjC8b+t7HmFR7+6ii7F+F2Si2601gskEJiAj+Vhgi4YBw=="/>
         </item>
         <item>
             <title>0.45.0</title>
             <pubDate>Sat, 18 Jul 2026 18:02:16 +0100</pubDate>
-            <link>https://raw.githubusercontent.com/steipete/CodexBar/main/appcast.xml</link>
+            <link>https://raw.githubusercontent.com/johanvillalbab/agentsbar/main/appcast.xml</link>
             <sparkle:version>107</sparkle:version>
             <sparkle:shortVersionString>0.45.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description><![CDATA[<h2>CodexBar 0.45.0</h2>
+            <description><![CDATA[<h2>AgentsBar 0.45.0</h2>
 <h3>Added</h3>
 <ul>
 <li>Menu bar: add drag-and-drop layouts with customizable identity, usage, reset, cost, spacing, and stacked-line tokens (#2275).</li>
 <li>Usage: estimate weekly quota in full 5-hour windows and show whether it can run out before reset (#2261). Thanks @hdsheena!</li>
-<li>CLI: add quota-aware codexbar guard automation gates with stable exit codes, explicit windows, JSON output, and bounded fetches (#2237). Thanks @OfficialAbhinavSingh!</li>
+<li>CLI: add quota-aware agentsbar guard automation gates with stable exit codes, explicit windows, JSON output, and bounded fetches (#2237). Thanks @OfficialAbhinavSingh!</li>
 <li>CLI: add a gated browser-cookie refresh command for cookie-backed providers (#2262). Thanks @PINKIIILQWQ!</li>
 <li>OpenCode: add safe cookie re-import actions to OpenCode and OpenCode Go settings, preserving cached sessions until refreshed cookies validate (#2264). Thanks @PINKIIILQWQ!</li>
 <li>Refresh: add an opt-in agent-aware Adaptive mode with consent-gated, bounded local activity detection (#2111). Thanks @hhh2210!</li>
@@ -110,18 +110,18 @@
 <li>Tests: migrate remaining process-global test overrides to task-local scopes and remove dead seams (#2239, #2240, #2242, #2245). Thanks @anagnorisis2peripeteia!</li>
 <li>Internal: enforce bounded agent-aware Adaptive scans and zero-scan behavior without consent (#2276).</li>
 </ul>
-<p><a href="https://github.com/steipete/CodexBar/blob/main/CHANGELOG.md">View full changelog</a></p>
+<p><a href="https://github.com/johanvillalbab/agentsbar/blob/main/CHANGELOG.md">View full changelog</a></p>
 ]]></description>
-            <enclosure url="https://github.com/steipete/CodexBar/releases/download/v0.45.0/CodexBar-macos-universal-0.45.0.zip" length="53086127" type="application/octet-stream" sparkle:edSignature="BcJ0EiMReF49ELidhxy3DwuKfcHFfzQoTeGGD4kxwIcYgbfxELg7ESxLdZVDO69DF1yI0V3/FACMwpu2RxUYBA=="/>
+            <enclosure url="https://github.com/johanvillalbab/agentsbar/releases/download/v0.45.0/AgentsBar-macos-universal-0.45.0.zip" length="53086127" type="application/octet-stream" sparkle:edSignature="BcJ0EiMReF49ELidhxy3DwuKfcHFfzQoTeGGD4kxwIcYgbfxELg7ESxLdZVDO69DF1yI0V3/FACMwpu2RxUYBA=="/>
         </item>
         <item>
             <title>0.14.0</title>
             <pubDate>Thu, 25 Dec 2025 03:56:15 +0100</pubDate>
-            <link>https://raw.githubusercontent.com/steipete/CodexBar/main/appcast.xml</link>
+            <link>https://raw.githubusercontent.com/johanvillalbab/agentsbar/main/appcast.xml</link>
             <sparkle:version>41</sparkle:version>
             <sparkle:shortVersionString>0.14.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-            <description><![CDATA[<h2>CodexBar 0.14.0</h2>
+            <description><![CDATA[<h2>AgentsBar 0.14.0</h2>
 <ul>
 <li>Antigravity: new local provider for the Antigravity language server (Claude + Gemini quotas) with an experimental toggle; improved plan display + debug output; clearer not-running/port errors; hide account switch.</li>
 <li>Status: poll Google Workspace incidents for Gemini + Antigravity; Status Page opens the Workspace status page.</li>
@@ -132,27 +132,27 @@
 <li>OpenAI web: fix dashboard ghost overlay on desktop (WebKit keepalive window).</li>
 <li>Debug: add a debug-lldb build mode for troubleshooting.</li>
 </ul>
-<p><a href="https://github.com/steipete/CodexBar/blob/main/CHANGELOG.md">View full changelog</a></p>
+<p><a href="https://github.com/johanvillalbab/agentsbar/blob/main/CHANGELOG.md">View full changelog</a></p>
 ]]></description>
-            <enclosure url="https://github.com/steipete/CodexBar/releases/download/v0.14.0/CodexBar-0.14.0.zip" length="5382347" type="application/octet-stream" sparkle:edSignature="qhj8jnqH/eOXEP2plbZyTb8w1x0Afcpix0kC+pzMh5jX9Lkf3Yg2Bvd6/vsKdhOObEwJjQZRb/RKiSBx55J3DA=="/>
+            <enclosure url="https://github.com/johanvillalbab/agentsbar/releases/download/v0.14.0/AgentsBar-0.14.0.zip" length="5382347" type="application/octet-stream" sparkle:edSignature="qhj8jnqH/eOXEP2plbZyTb8w1x0Afcpix0kC+pzMh5jX9Lkf3Yg2Bvd6/vsKdhOObEwJjQZRb/RKiSBx55J3DA=="/>
         </item>
         <item>
             <title>0.13.0</title>
             <pubDate>Wed, 24 Dec 2025 01:53:35 +0100</pubDate>
-            <link>https://raw.githubusercontent.com/steipete/CodexBar/main/appcast.xml</link>
+            <link>https://raw.githubusercontent.com/johanvillalbab/agentsbar/main/appcast.xml</link>
             <sparkle:version>40</sparkle:version>
             <sparkle:shortVersionString>0.13.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://github.com/steipete/CodexBar/releases/download/v0.13.0/CodexBar-0.13.0.zip" length="5099083" type="application/octet-stream" sparkle:edSignature="EmhEmcTFQEpuQG6vZ288l9j278VjnpQdQcmZnU1JDvzERVTtnIg+8RDlsHV9niwejaOBPX6mvXST3vNJHpwADA=="/>
+            <enclosure url="https://github.com/johanvillalbab/agentsbar/releases/download/v0.13.0/AgentsBar-0.13.0.zip" length="5099083" type="application/octet-stream" sparkle:edSignature="EmhEmcTFQEpuQG6vZ288l9j278VjnpQdQcmZnU1JDvzERVTtnIg+8RDlsHV9niwejaOBPX6mvXST3vNJHpwADA=="/>
         </item>
         <item>
             <title>0.12.0</title>
             <pubDate>Tue, 23 Dec 2025 04:39:05 +0100</pubDate>
-            <link>https://raw.githubusercontent.com/steipete/CodexBar/main/appcast.xml</link>
+            <link>https://raw.githubusercontent.com/johanvillalbab/agentsbar/main/appcast.xml</link>
             <sparkle:version>39</sparkle:version>
             <sparkle:shortVersionString>0.12.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://github.com/steipete/CodexBar/releases/download/v0.12.0/CodexBar-0.12.0.zip" length="4888386" type="application/octet-stream" sparkle:edSignature="tQMHO/RNAbvwRHXYnLAkNV2ksiV722qR8fEYzcbipgetacfPnwnLJ0Pe/lAiZ03PBmj3BkisHb74GosUlSV+DQ=="/>
+            <enclosure url="https://github.com/johanvillalbab/agentsbar/releases/download/v0.12.0/AgentsBar-0.12.0.zip" length="4888386" type="application/octet-stream" sparkle:edSignature="tQMHO/RNAbvwRHXYnLAkNV2ksiV722qR8fEYzcbipgetacfPnwnLJ0Pe/lAiZ03PBmj3BkisHb74GosUlSV+DQ=="/>
         </item>
     </channel>
 </rss>

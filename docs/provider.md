@@ -24,8 +24,8 @@ This doc describes the **current provider architecture** and the exact steps to 
 - **Identity fields**: email/org/plan/loginMethod. Must stay **siloed per provider**.
 
 ## Architecture overview (now)
-- `Sources/CodexBarCore`: provider descriptors + fetch strategies + probes + parsing + shared utilities.
-- `Sources/CodexBar`: UI/state + provider implementations (settings/login/menu hooks only).
+- `Sources/AgentsBarCore`: provider descriptors + fetch strategies + probes + parsing + shared utilities.
+- `Sources/AgentsBar`: UI/state + provider implementations (settings/login/menu hooks only).
 - Provider IDs are compile-time: `UsageProvider` enum (used for persistence + widgets).
 - Provider wiring is descriptor-driven:
   - `ProviderDescriptor` owns labels, URLs, default enablement, and fetch pipeline.
@@ -83,13 +83,13 @@ Expose a narrow set of protocols/structs that provider implementations can use:
 Rule: providers do not talk to `FileManager`, `Security`, or “browser internals” directly unless they *are* the host API implementation.
 
 ## Provider-specific code layout
-- `Sources/CodexBarCore/Providers/<ProviderID>/`
+- `Sources/AgentsBarCore/Providers/<ProviderID>/`
   - `<ProviderID>Descriptor.swift` (descriptor + strategy pipeline)
   - `<ProviderID>Strategies.swift` (strategy implementations)
   - `<ProviderID>Probe.swift` / `<ProviderID>Fetcher.swift`
   - `<ProviderID>Models.swift`
   - `<ProviderID>Parser.swift` (if text/HTML parsing)
-- `Sources/CodexBar/Providers/<ProviderID>/`
+- `Sources/AgentsBar/Providers/<ProviderID>/`
   - `<ProviderID>ProviderImplementation.swift` (settings/login UI hooks only)
 
 ## Minimal provider example (copy-paste)
@@ -179,8 +179,8 @@ An integration can be restored when missing operator or authorization evidence b
 ## Adding a new provider (current flow)
 
 Checklist:
-- Add `UsageProvider` case in `Sources/CodexBarCore/Providers/Providers.swift`.
-- Create `Sources/CodexBarCore/Providers/<ProviderID>/`:
+- Add `UsageProvider` case in `Sources/AgentsBarCore/Providers/Providers.swift`.
+- Create `Sources/AgentsBarCore/Providers/<ProviderID>/`:
   - `<ProviderID>Descriptor.swift`: define `ProviderDescriptor` + fetch pipeline.
   - `<ProviderID>Strategies.swift`: implement one or more `ProviderFetchStrategy`.
   - `<ProviderID>Probe.swift` / `<ProviderID>Fetcher.swift`: concrete fetcher logic.
@@ -188,7 +188,7 @@ Checklist:
   - `<ProviderID>Parser.swift` (if needed).
 - Define a cached `public static let descriptor` and `static func makeDescriptor() -> ProviderDescriptor`.
 - Add the descriptor to `ProviderDescriptorRegistry.descriptorsByID`.
-- Add `Sources/CodexBar/Providers/<ProviderID>/<ProviderID>ProviderImplementation.swift`:
+- Add `Sources/AgentsBar/Providers/<ProviderID>/<ProviderID>ProviderImplementation.swift`:
   - `ProviderImplementation` only for settings/login UI hooks.
 - Add an exhaustive case to `ProviderImplementationRegistry.makeImplementation(for:)`.
 - Add icons + colors in descriptor:

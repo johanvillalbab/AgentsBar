@@ -1,13 +1,13 @@
 import Foundation
 import Testing
-@testable import CodexBarCore
+@testable import AgentsBarCore
 
 #if os(Linux)
 struct AntigravityCLIStrategyLinuxTests {
     @Test
     func `cli local strategy is available with HTTP fallback`() async throws {
         let binaryURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent("codexbar-antigravity-\(UUID().uuidString)")
+            .appendingPathComponent("agentsbar-antigravity-\(UUID().uuidString)")
         try Data("#!/bin/sh\n".utf8).write(to: binaryURL)
         try FileManager.default.setAttributes(
             [.posixPermissions: 0o755],

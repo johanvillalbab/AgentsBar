@@ -85,17 +85,17 @@ Gemini uses the Gemini CLI OAuth credentials and private quota APIs. No browser 
 ## Consumer-tier migration (June 2026)
 - [Google stopped serving](https://developers.google.com/gemini-code-assist/docs/deprecations/code-assist-individuals)
   Gemini CLI OAuth for individual, AI Pro, and Ultra accounts on 2026-06-18. Standard and Enterprise
-  subscriptions remain supported; paid API-key access is outside CodexBar's OAuth-backed Gemini provider.
+  subscriptions remain supported; paid API-key access is outside AgentsBar's OAuth-backed Gemini provider.
 - When quota, `loadCodeAssist`, or token-refresh responses include Google's unsupported-client
   migration signal (`UNSUPPORTED_CLIENT`, `IneligibleTierError`, or Antigravity migration copy),
-  CodexBar surfaces `consumerTierDeprecated` with guidance to use the Antigravity provider.
-- Settings shows an **Enable Antigravity provider** action only after CodexBar observes
+  AgentsBar surfaces `consumerTierDeprecated` with guidance to use the Antigravity provider.
+- Settings shows an **Enable Antigravity provider** action only after AgentsBar observes
   `consumerTierDeprecated` during a Gemini refresh (typed sentinel state, not user-facing text matching).
-- The action is explicit: CodexBar never automatically enables Antigravity or falls back to it.
-- Ordinary Gemini login, `notLoggedIn`, and Antigravity setup errors remain unchanged. CodexBar does not
+- The action is explicit: AgentsBar never automatically enables Antigravity or falls back to it.
+- Ordinary Gemini login, `notLoggedIn`, and Antigravity setup errors remain unchanged. AgentsBar does not
   capture Terminal `gemini` OAuth output, so Terminal-only failures cannot activate the migration action.
 - Workspace and education Google accounts are outside the June 2026 consumer shutdown; keep using the
   Gemini provider. Antigravity remains the consumer replacement path for individual, AI Pro, and Ultra.
 
 ## Key files
-- `Sources/CodexBarCore/Providers/Gemini/GeminiStatusProbe.swift`
+- `Sources/AgentsBarCore/Providers/Gemini/GeminiStatusProbe.swift`

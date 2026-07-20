@@ -57,7 +57,7 @@ assert_gate true rename-from-configuration-doc $'R100\tdocs/configuration.md\tdo
 assert_gate true agents-contract $'M\tAGENTS.md'
 assert_gate true rename-to-agents-contract $'R100\tdocs/old.md\tAGENTS.md'
 assert_gate true rename-from-agents-contract $'R100\tAGENTS.md\tdocs/new.md'
-assert_gate true source $'M\tSources/CodexBar/App.swift'
+assert_gate true source $'M\tSources/AgentsBar/App.swift'
 assert_gate false docs-site $'M\tdocs/index.html' $'M\tdocs/site.css' $'M\tdocs/site.js' \
   $'M\tdocs/site-locales.mjs' $'M\tdocs/social.html' $'M\tdocs/social.png' \
   $'M\tdocs/CNAME' $'M\tdocs/.nojekyll' $'M\tdocs/llms.txt'
@@ -65,8 +65,8 @@ assert_gate false docs-site-assets $'M\tdocs/icon.png' $'M\tdocs/logos/provider-
 assert_gate true docs-unknown-code $'M\tdocs/custom-tool.js'
 assert_gate true docs-site-with-config $'M\tdocs/site.css' $'M\tdocs/configuration.md'
 assert_gate true empty
-assert_gate true source-to-docs $'R100\tSources/CodexBar/App.swift\tdocs/App.md'
-assert_gate true docs-to-source $'R100\tdocs/App.md\tSources/CodexBar/App.swift'
+assert_gate true source-to-docs $'R100\tSources/AgentsBar/App.swift\tdocs/App.md'
+assert_gate true docs-to-source $'R100\tdocs/App.md\tSources/AgentsBar/App.swift'
 assert_gate false docs-to-site $'R100\tdocs/old.md\tdocs/site.css'
 
 assert_linux_musl_gate() {
@@ -94,11 +94,11 @@ assert_linux_musl_gate() {
 }
 
 assert_linux_musl_gate true package-manifest $'M\tPackage.swift'
-assert_linux_musl_gate true swift-source $'M\tSources/CodexBarCore/Process.swift'
-assert_linux_musl_gate true nested-swift-source $'M\tSources/CodexBarCore/Host/Process/Process.swift'
-assert_linux_musl_gate true rename-from-swift $'R100\tSources/CodexBarCore/Old.swift\tdocs/Old.md'
-assert_linux_musl_gate true rename-to-swift $'R100\tdocs/New.md\tSources/CodexBarCore/New.swift'
-assert_linux_musl_gate false tests-only $'M\tTests/CodexBarTests/ProcessTests.swift'
+assert_linux_musl_gate true swift-source $'M\tSources/AgentsBarCore/Process.swift'
+assert_linux_musl_gate true nested-swift-source $'M\tSources/AgentsBarCore/Host/Process/Process.swift'
+assert_linux_musl_gate true rename-from-swift $'R100\tSources/AgentsBarCore/Old.swift\tdocs/Old.md'
+assert_linux_musl_gate true rename-to-swift $'R100\tdocs/New.md\tSources/AgentsBarCore/New.swift'
+assert_linux_musl_gate false tests-only $'M\tTests/AgentsBarTests/ProcessTests.swift'
 assert_linux_musl_gate false workflow-only $'M\t.github/workflows/ci.yml'
 assert_linux_musl_gate false script-only $'M\tScripts/ci_verify_test_jobs.sh'
 assert_linux_musl_gate false package-resolved $'M\tPackage.resolved'
@@ -106,7 +106,7 @@ assert_linux_musl_gate true empty-diff
 
 draft_paths="${tmp_dir}/draft-source.paths"
 draft_output="${tmp_dir}/draft-source.output"
-printf '%s\n' $'M\tSources/CodexBar/App.swift' > "$draft_paths"
+printf '%s\n' $'M\tSources/AgentsBar/App.swift' > "$draft_paths"
 CI_PULL_REQUEST_DRAFT=true GITHUB_OUTPUT="$draft_output" \
   "${ROOT_DIR}/Scripts/ci_macos_test_gate.sh" "$draft_paths" >/dev/null
 if [[ "$(sed -n 's/^macos-tests=//p' "$draft_output")" != true ]]; then

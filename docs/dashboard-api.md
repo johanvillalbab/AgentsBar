@@ -1,14 +1,14 @@
 ---
-summary: "Dashboard snapshot API for codexbar serve: bearer-token auth, plain-HTTP threat model, and the display-oriented payload contract."
+summary: "Dashboard snapshot API for agentsbar serve: bearer-token auth, plain-HTTP threat model, and the display-oriented payload contract."
 read_when:
-  - "Building a dashboard client against codexbar serve"
+  - "Building a dashboard client against agentsbar serve"
   - "Configuring --dashboard-token, --host, or --allow-plain-http"
   - "Reviewing the serve auth or transport security model"
 ---
 
 # Dashboard Snapshot API
 
-`codexbar serve` exposes a versioned, display-oriented snapshot of CodexBar usage data for dashboard clients:
+`agentsbar serve` exposes a versioned, display-oriented snapshot of AgentsBar usage data for dashboard clients:
 
 ```text
 GET /dashboard/v1/snapshot
@@ -26,20 +26,20 @@ On the default loopback bind, `/usage` and `/cost` are unchanged and unauthentic
 openssl rand -hex 32
 
 # Preferred: environment variable (argv leaks via `ps`)
-CODEXBAR_DASHBOARD_TOKEN=YOUR_TOKEN codexbar serve
+AGENTSBAR_DASHBOARD_TOKEN=YOUR_TOKEN agentsbar serve
 
 # Also accepted, but visible in the process list
-codexbar serve --dashboard-token YOUR_TOKEN
+agentsbar serve --dashboard-token YOUR_TOKEN
 ```
 
-- `CODEXBAR_DASHBOARD_TOKEN` wins over `--dashboard-token` when both are set.
+- `AGENTSBAR_DASHBOARD_TOKEN` wins over `--dashboard-token` when both are set.
 - Empty or whitespace-only tokens are startup errors, not a silent no-auth mode.
 - Rotate the token by restarting `serve` with a new value.
 - `--host` accepts `localhost` or an IPv4 address; the socket layer does not support IPv6 binds.
 
 ## Threat model — read before binding beyond loopback
 
-Transport is **plain HTTP**. There is no TLS in `codexbar serve`, which means:
+Transport is **plain HTTP**. There is no TLS in `agentsbar serve`, which means:
 
 - The bearer token crosses the network **in cleartext on every request**. Anyone who can observe the path (same Wi-Fi, ARP spoofing, a compromised switch, your ISP on a routed path) can capture the token and replay it until the server restarts with a new one.
 - The response bodies — plan labels, usage percentages, email domains, cost figures — cross the network in cleartext too.
@@ -47,7 +47,7 @@ Transport is **plain HTTP**. There is no TLS in `codexbar serve`, which means:
 
 Deployments, from safest to least safe:
 
-1. **Loopback only (default).** `codexbar serve` binds `127.0.0.1`; nothing leaves the machine. Rejects non-loopback `Host` headers, so browser-based DNS-rebinding attacks cannot reach it either.
+1. **Loopback only (default).** `agentsbar serve` binds `127.0.0.1`; nothing leaves the machine. Rejects non-loopback `Host` headers, so browser-based DNS-rebinding attacks cannot reach it either.
 2. **TLS-terminating reverse proxy.** Keep the loopback bind and put a proxy in front. Caddy example:
 
    ```caddyfile
@@ -65,7 +65,7 @@ Deployments, from safest to least safe:
 3. **Trusted network segment, cleartext accepted.** Bind a LAN address directly:
 
    ```bash
-   CODEXBAR_DASHBOARD_TOKEN=... codexbar serve --host 0.0.0.0 --allow-plain-http
+   AGENTSBAR_DASHBOARD_TOKEN=... agentsbar serve --host 0.0.0.0 --allow-plain-http
    ```
 
    A non-loopback `--host` refuses to start without a token, and refuses to start without `--allow-plain-http` — passing that flag is the explicit, operational acceptance that cleartext bearer transport is fine on this network. The token then gates all data routes, and the server logs a one-line warning at startup.
@@ -103,7 +103,7 @@ The snapshot is a stable display contract, not a raw dump of provider internals.
   "generatedAt": "2026-07-16T12:00:00Z",
   "staleAfterSeconds": 180,
   "host": {
-    "codexBarVersion": "0.37.2",
+    "agentsBarVersion": "0.37.2",
     "refreshIntervalSeconds": 60
   },
   "providers": [
@@ -155,11 +155,11 @@ The snapshot is a stable display contract, not a raw dump of provider internals.
 - `schemaVersion`: Dashboard API schema version.
 - `generatedAt`: Snapshot generation timestamp.
 - `staleAfterSeconds`: Client-side staleness hint.
-- `host.codexBarVersion`: CodexBar version when available.
+- `host.agentsBarVersion`: AgentsBar version when available.
 - `host.refreshIntervalSeconds`: Server response cache interval.
 - `providers[].id`: Provider identifier.
 - `providers[].name`: Provider display name.
-- `providers[].enabled`: Whether the provider is enabled in CodexBar config.
+- `providers[].enabled`: Whether the provider is enabled in AgentsBar config.
 - `providers[].source`: Source used for the provider data.
 - `providers[].status`: Provider service status when available (`level`: `ok` | `warning` | `critical` | `unknown`).
 - `providers[].identity`: Redacted account email and plan label, or `null`.

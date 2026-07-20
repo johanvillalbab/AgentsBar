@@ -8,7 +8,7 @@ read_when:
 
 # Qoder Provider
 
-CodexBar reads Qoder big model credit usage from the Qoder account dashboard. It supports the international
+AgentsBar reads Qoder big model credit usage from the Qoder account dashboard. It supports the international
 `qoder.com` site and the China mainland `qoder.com.cn` site.
 
 ## Setup
@@ -19,14 +19,14 @@ CodexBar reads Qoder big model credit usage from the Qoder account dashboard. It
    Chrome.
 4. Leave Cookie source on **Automatic**, or switch to **Manual**. For `qoder.com`, paste a `Cookie:` header or a cURL/
    HTTP request capture from the usage page. For `qoder.com.cn`, paste a request capture that includes the China URL
-   or `Host` header so CodexBar can select the matching site.
+   or `Host` header so AgentsBar can select the matching site.
 
 Bare `Cookie:` headers default to `qoder.com`. Request captures are parsed only when the target URL or header host
 clearly belongs to `qoder.com` or `qoder.com.cn`.
 
 ## Data Source
 
-CodexBar requests:
+AgentsBar requests:
 
 - `GET https://qoder.com/api/v2/me/usages/big_model_credits`
 - `GET https://qoder.com.cn/api/v2/me/usages/big_model_credits`
@@ -44,20 +44,20 @@ and caches valid cookie headers. Invalid cached sessions are skipped so a fresh 
 ## CLI Usage
 
 ```bash
-codexbar usage --provider qoder --verbose
+agentsbar usage --provider qoder --verbose
 ```
 
 ## Troubleshooting
 
 ### "Qoder session cookie not found"
 
-Sign in to Qoder in Chrome, then refresh CodexBar. If browser import is unavailable, switch to manual mode. Paste a
+Sign in to Qoder in Chrome, then refresh AgentsBar. If browser import is unavailable, switch to manual mode. Paste a
 fresh `Cookie:` header for `qoder.com`; for `qoder.com.cn`, paste a cURL/HTTP request capture containing the China URL
 or `Host` header.
 
 ### "Qoder session is invalid or expired"
 
-Log in to Qoder again. CodexBar clears invalid cached cookies and retries fresh browser cookies in automatic mode.
+Log in to Qoder again. AgentsBar clears invalid cached cookies and retries fresh browser cookies in automatic mode.
 
 ### Usage values look wrong
 
@@ -66,8 +66,8 @@ captures should come from the same site.
 
 ## Related Files
 
-- `Sources/CodexBarCore/Providers/Qoder/QoderProviderDescriptor.swift`
-- `Sources/CodexBarCore/Providers/Qoder/QoderUsageFetcher.swift`
-- `Sources/CodexBarCore/Providers/Qoder/QoderUsageSnapshot.swift`
-- `Sources/CodexBarCore/Providers/Qoder/QoderCookieImporter.swift`
-- `Sources/CodexBar/Providers/Qoder/QoderProviderImplementation.swift`
+- `Sources/AgentsBarCore/Providers/Qoder/QoderProviderDescriptor.swift`
+- `Sources/AgentsBarCore/Providers/Qoder/QoderUsageFetcher.swift`
+- `Sources/AgentsBarCore/Providers/Qoder/QoderUsageSnapshot.swift`
+- `Sources/AgentsBarCore/Providers/Qoder/QoderCookieImporter.swift`
+- `Sources/AgentsBar/Providers/Qoder/QoderProviderImplementation.swift`

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-TEMP_DIR=$(mktemp -d "${TMPDIR:-/tmp}/codexbar-repository-size.XXXXXX")
+TEMP_DIR=$(mktemp -d "${TMPDIR:-/tmp}/agentsbar-repository-size.XXXXXX")
 trap 'rm -rf "$TEMP_DIR"' EXIT
 
 mkdir -p "$TEMP_DIR/Scripts"
@@ -51,31 +51,31 @@ git -C "$TEMP_DIR" add "$odd_path"
 "$TEMP_DIR/Scripts/check_repository_size.sh" >/dev/null
 
 artifacts=(
-  "CodexBar 2.app/Contents/MacOS/CodexBar"
-  "CodexBar.dSYM/Contents/Info.plist"
-  "CodexBar.xcarchive/Products/Applications/CodexBar.app/Contents/Info.plist"
-  "CodexBar.xcresult/Data/data"
-  "CodexBar.ipa"
-  "CodexBar.zip"
-  "CodexBar.delta"
-  "CodexBar.dmg"
-  "CodexBar.pkg"
-  "CodexBar.tar.gz"
-  "CodexBar.tgz"
+  "AgentsBar 2.app/Contents/MacOS/AgentsBar"
+  "AgentsBar.dSYM/Contents/Info.plist"
+  "AgentsBar.xcarchive/Products/Applications/AgentsBar.app/Contents/Info.plist"
+  "AgentsBar.xcresult/Data/data"
+  "AgentsBar.ipa"
+  "AgentsBar.zip"
+  "AgentsBar.delta"
+  "AgentsBar.dmg"
+  "AgentsBar.pkg"
+  "AgentsBar.tar.gz"
+  "AgentsBar.tgz"
 )
 for artifact in "${artifacts[@]}"; do
   mkdir -p "$TEMP_DIR/$(dirname "$artifact")"
   printf 'release artifact\n' > "$TEMP_DIR/$artifact"
   git -C "$TEMP_DIR" add -f "$artifact"
 done
-ln -s source.txt "$TEMP_DIR/CodexBar-latest.dmg"
-git -C "$TEMP_DIR" add -f CodexBar-latest.dmg
-rm "$TEMP_DIR/CodexBar.zip"
+ln -s source.txt "$TEMP_DIR/AgentsBar-latest.dmg"
+git -C "$TEMP_DIR" add -f AgentsBar-latest.dmg
+rm "$TEMP_DIR/AgentsBar.zip"
 if "$TEMP_DIR/Scripts/check_repository_size.sh" >"$TEMP_DIR/artifact.log" 2>&1; then
   printf 'ERROR: tracked release artifacts were accepted.\n' >&2
   exit 1
 fi
-for artifact in "${artifacts[@]}" CodexBar-latest.dmg; do
+for artifact in "${artifacts[@]}" AgentsBar-latest.dmg; do
   grep -Fq "generated artifact is tracked: $artifact" "$TEMP_DIR/artifact.log"
 done
 

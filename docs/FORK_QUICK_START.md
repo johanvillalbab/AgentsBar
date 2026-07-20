@@ -6,11 +6,11 @@ read_when:
   - Running fork maintenance commands
 ---
 
-# CodexBar Fork - Quick Start Guide
+# AgentsBar Fork - Quick Start Guide
 
 **Fork Maintainer:** Brandon Charleson ([topoffunnel.com](https://topoffunnel.com))  
 **Original Author:** Peter Steinberger ([steipete](https://twitter.com/steipete))  
-**Fork Repository:** https://github.com/topoffunnel/CodexBar
+**Fork Repository:** https://github.com/topoffunnel/AgentsBar
 
 ---
 
@@ -51,8 +51,8 @@ swiftlint --strict
 ./Scripts/package_app.sh
 
 # Restart app after rebuild
-pkill -x CodexBar || pkill -f CodexBar.app || true
-cd /Users/steipete/Projects/codexbar && open -n /Users/steipete/Projects/codexbar/CodexBar.app
+pkill -x AgentsBar || pkill -f AgentsBar.app || true
+cd /Users/steipete/Projects/agentsbar && open -n /Users/steipete/Projects/agentsbar/AgentsBar.app
 ```
 
 ### Release
@@ -88,10 +88,10 @@ git push origin feature/my-feature
 ## 📁 Key Files & Directories
 
 ### Source Code
-- `Sources/CodexBar/` - Swift 6 menu bar app
-- `Sources/CodexBarCore/` - Core logic, providers, utilities
-- `Sources/CodexBarCore/Providers/Augment/` - Augment provider implementation
-- `Tests/CodexBarTests/` - XCTest coverage
+- `Sources/AgentsBar/` - Swift 6 menu bar app
+- `Sources/AgentsBarCore/` - Core logic, providers, utilities
+- `Sources/AgentsBarCore/Providers/Augment/` - Augment provider implementation
+- `Tests/AgentsBarTests/` - XCTest coverage
 
 ### Scripts
 - `Scripts/compile_and_run.sh` - Main development script
@@ -120,8 +120,8 @@ git push origin feature/my-feature
 7. Push and create PR
 
 ### Debugging Augment Issues
-1. Enable debug logging: `export CODEXBAR_LOG_LEVEL=debug`
-2. Check Console.app for "com.steipete.codexbar"
+1. Enable debug logging: `export AGENTSBAR_LOG_LEVEL=debug`
+2. Check Console.app for "com.steipete.agentsbar"
 3. Use Settings → Debug → Augment → Show Debug Info
 4. Check `docs/augment.md` troubleshooting section
 
@@ -150,7 +150,7 @@ swift test --filter AugmentTests
 ### App Won't Launch
 ```bash
 # Kill all instances
-pkill -x CodexBar || pkill -f CodexBar.app || true
+pkill -x AgentsBar || pkill -f AgentsBar.app || true
 
 # Rebuild and relaunch
 ./Scripts/compile_and_run.sh
@@ -175,7 +175,7 @@ swiftlint --strict
 
 ### Keychain Permission Prompts
 - This fork includes fixes to eliminate prompts
-- If you still see prompts, check `Sources/CodexBarCore/Keychain/`
+- If you still see prompts, check `Sources/AgentsBarCore/Keychain/`
 - Ensure you're running the latest build
 
 ---
@@ -183,9 +183,9 @@ swiftlint --strict
 ## 📚 Learning Resources
 
 ### Understanding the Codebase
-1. Start with `Sources/CodexBar/CodexbarApp.swift` - App entry point
-2. Review `Sources/CodexBarCore/UsageStore.swift` - Main state management
-3. Check `Sources/CodexBarCore/Providers/` - Provider implementations
+1. Start with `Sources/AgentsBar/AgentsbarApp.swift` - App entry point
+2. Review `Sources/AgentsBarCore/UsageStore.swift` - Main state management
+3. Check `Sources/AgentsBarCore/Providers/` - Provider implementations
 4. Read `docs/provider.md` - Provider authoring guide
 
 ### Swift 6 & SwiftUI
@@ -209,11 +209,11 @@ swiftlint --strict
 1. Fork the fork repository
 2. Create feature branch
 3. Make changes with tests
-4. Submit PR to `topoffunnel/CodexBar`
+4. Submit PR to `topoffunnel/AgentsBar`
 
 ### To Upstream
 1. Check if feature benefits all users
-2. Create PR to `steipete/CodexBar`
+2. Create PR to `johanvillalbab/agentsbar`
 3. Reference this fork if relevant
 4. Be patient with review process
 
@@ -224,11 +224,11 @@ See `docs/FORK_ROADMAP.md` for contribution strategy.
 ## 📞 Support
 
 ### Fork-Specific Issues
-- GitHub Issues: https://github.com/topoffunnel/CodexBar/issues
+- GitHub Issues: https://github.com/topoffunnel/AgentsBar/issues
 - Email: [your-email]@topoffunnel.com
 
 ### Upstream Issues
-- GitHub Issues: https://github.com/steipete/CodexBar/issues
+- GitHub Issues: https://github.com/johanvillalbab/agentsbar/issues
 - Twitter: [@steipete](https://twitter.com/steipete)
 
 ---

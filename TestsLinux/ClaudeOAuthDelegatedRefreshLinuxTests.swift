@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import CodexBarCore
+@testable import AgentsBarCore
 
 @Suite(.serialized)
 struct ClaudeOAuthDelegatedRefreshLinuxTests {
@@ -42,7 +42,7 @@ struct ClaudeOAuthDelegatedRefreshLinuxTests {
             promptMode: .always)
 
         #expect(result.attempts == 0)
-        #expect(result.message.contains("CodexBar CLI does not launch Claude"))
+        #expect(result.message.contains("AgentsBar CLI does not launch Claude"))
     }
 
     @Test
@@ -65,8 +65,8 @@ struct ClaudeOAuthDelegatedRefreshLinuxTests {
 
         #expect(result.attempts == 0)
         #expect(result.message.contains("background repair is suppressed"))
-        #expect(result.message.contains("Click Refresh in the CodexBar menu"))
-        #expect(!result.message.contains("Open the CodexBar menu or"))
+        #expect(result.message.contains("Click Refresh in the AgentsBar menu"))
+        #expect(!result.message.contains("Open the AgentsBar menu or"))
     }
 
     private func runDelegatedRefresh(

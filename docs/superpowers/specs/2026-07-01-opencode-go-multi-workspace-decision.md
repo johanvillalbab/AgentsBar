@@ -8,12 +8,12 @@ read_when:
 # OpenCode Go multi-workspace usage
 
 **Status:** automatic fan-out accepted; not implemented
-**Issue:** [#1626](https://github.com/steipete/CodexBar/issues/1626)
+**Issue:** [#1626](https://github.com/johanvillalbab/agentsbar/issues/1626)
 **Date:** 2026-07-01
 
 ## Problem
 
-One OpenCode account can have several workspaces, each with its own Go subscription. CodexBar discovers workspace
+One OpenCode account can have several workspaces, each with its own Go subscription. AgentsBar discovers workspace
 identifiers but selects only the first one, stores one optional workspace override, and projects one scalar usage
 snapshot. Users must replace the override and refresh to inspect another workspace.
 
@@ -27,7 +27,7 @@ rendered result.
 - Current discovery parsing yields workspace identifiers only. A stable, authenticated response field or endpoint for
   display names still needs redacted live proof before names become a persisted contract.
 - The current snapshot, refresh state, settings field, CLI projection, and menu card are single-workspace.
-- Merged PR [#1788](https://github.com/steipete/CodexBar/pull/1788) made the weekly usage window optional. Multi-workspace
+- Merged PR [#1788](https://github.com/johanvillalbab/agentsbar/pull/1788) made the weekly usage window optional. Multi-workspace
   projection must preserve that rolling-only result shape independently for every workspace.
 - Shared token-account rows are the wrong identity model: separate workspace results reuse one credential.
 
@@ -100,7 +100,7 @@ Choose option A with these boundaries:
 
 ## Decision
 
-CodexBar accepts automatic workspace fan-out with stacked cards and the existing single-workspace override, bounded by the
+AgentsBar accepts automatic workspace fan-out with stacked cards and the existing single-workspace override, bounded by the
 contract above. This document does not change runtime behavior. Implementation still requires redacted authenticated
 multi-workspace proof, focused parser/model tests, packaged UI proof, and separate review. Workspace-name persistence
 remains out of scope until the authenticated response contract is proven.

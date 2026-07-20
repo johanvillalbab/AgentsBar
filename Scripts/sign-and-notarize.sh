@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-APP_NAME="CodexBar"
+APP_NAME="AgentsBar"
 APP_IDENTITY="Developer ID Application: Peter Steinberger (Y5PE65HELJ)"
-APP_BUNDLE="CodexBar.app"
+APP_BUNDLE="AgentsBar.app"
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 source "$ROOT/version.env"
 source "$ROOT/Scripts/release_artifacts.sh"
@@ -21,17 +21,17 @@ verify_distribution_policy() {
 
 # Allow building a universal binary if ARCHES is provided; default to universal (arm64 + x86_64).
 ARCHES_VALUE=${ARCHES:-"arm64 x86_64"}
-ZIP_NAME=$(codexbar_app_zip_name "$MARKETING_VERSION" "$ARCHES_VALUE")
-DSYM_ZIP=$(codexbar_dsym_zip_name "$MARKETING_VERSION" "$ARCHES_VALUE")
+ZIP_NAME=$(agentsbar_app_zip_name "$MARKETING_VERSION" "$ARCHES_VALUE")
+DSYM_ZIP=$(agentsbar_dsym_zip_name "$MARKETING_VERSION" "$ARCHES_VALUE")
 
 if [[ -z "${APP_STORE_CONNECT_API_KEY_P8:-}" || -z "${APP_STORE_CONNECT_KEY_ID:-}" || -z "${APP_STORE_CONNECT_ISSUER_ID:-}" ]]; then
   echo "Missing APP_STORE_CONNECT_* env vars (API key, key id, issuer id)." >&2
   exit 1
 fi
 
-NOTARIZATION_TEMP_DIR=$(mktemp -d "${TMPDIR:-/tmp}/codexbar-notarize.XXXXXX")
+NOTARIZATION_TEMP_DIR=$(mktemp -d "${TMPDIR:-/tmp}/agentsbar-notarize.XXXXXX")
 chmod 700 "$NOTARIZATION_TEMP_DIR"
-API_KEY_PATH="$NOTARIZATION_TEMP_DIR/codexbar-api-key.p8"
+API_KEY_PATH="$NOTARIZATION_TEMP_DIR/agentsbar-api-key.p8"
 NOTARIZATION_ZIP="$NOTARIZATION_TEMP_DIR/${APP_NAME}Notarize.zip"
 trap 'rm -rf "$NOTARIZATION_TEMP_DIR"' EXIT
 
@@ -42,28 +42,28 @@ trap 'rm -rf "$NOTARIZATION_TEMP_DIR"' EXIT
 chmod 600 "$API_KEY_PATH"
 
 ARCH_LIST=( ${ARCHES_VALUE} )
-ARCHES="${ARCHES_VALUE}" CODEXBAR_SIGNING=identity ./Scripts/package_app.sh release
+ARCHES="${ARCHES_VALUE}" AGENTSBAR_SIGNING=identity ./Scripts/package_app.sh release
 
 ENTITLEMENTS_DIR="$ROOT/.build/entitlements"
-APP_ENTITLEMENTS="${ENTITLEMENTS_DIR}/CodexBar.entitlements"
-WIDGET_ENTITLEMENTS="${ENTITLEMENTS_DIR}/CodexBarWidget.entitlements"
+APP_ENTITLEMENTS="${ENTITLEMENTS_DIR}/AgentsBar.entitlements"
+WIDGET_ENTITLEMENTS="${ENTITLEMENTS_DIR}/AgentsBarWidget.entitlements"
 
 echo "Signing with $APP_IDENTITY"
-if [[ -f "$APP_BUNDLE/Contents/Helpers/CodexBarCLI" ]]; then
+if [[ -f "$APP_BUNDLE/Contents/Helpers/AgentsBarCLI" ]]; then
   codesign --force --timestamp --options runtime --sign "$APP_IDENTITY" \
-    "$APP_BUNDLE/Contents/Helpers/CodexBarCLI"
+    "$APP_BUNDLE/Contents/Helpers/AgentsBarCLI"
 fi
-if [[ -f "$APP_BUNDLE/Contents/Helpers/CodexBarClaudeWatchdog" ]]; then
+if [[ -f "$APP_BUNDLE/Contents/Helpers/AgentsBarClaudeWatchdog" ]]; then
   codesign --force --timestamp --options runtime --sign "$APP_IDENTITY" \
-    "$APP_BUNDLE/Contents/Helpers/CodexBarClaudeWatchdog"
+    "$APP_BUNDLE/Contents/Helpers/AgentsBarClaudeWatchdog"
 fi
-if [[ -d "$APP_BUNDLE/Contents/PlugIns/CodexBarWidget.appex" ]]; then
+if [[ -d "$APP_BUNDLE/Contents/PlugIns/AgentsBarWidget.appex" ]]; then
   codesign --force --timestamp --options runtime --sign "$APP_IDENTITY" \
     --entitlements "$WIDGET_ENTITLEMENTS" \
-    "$APP_BUNDLE/Contents/PlugIns/CodexBarWidget.appex/Contents/MacOS/CodexBarWidget"
+    "$APP_BUNDLE/Contents/PlugIns/AgentsBarWidget.appex/Contents/MacOS/AgentsBarWidget"
   codesign --force --timestamp --options runtime --sign "$APP_IDENTITY" \
     --entitlements "$WIDGET_ENTITLEMENTS" \
-    "$APP_BUNDLE/Contents/PlugIns/CodexBarWidget.appex"
+    "$APP_BUNDLE/Contents/PlugIns/AgentsBarWidget.appex"
 fi
 codesign --force --timestamp --options runtime --sign "$APP_IDENTITY" \
   --entitlements "$APP_ENTITLEMENTS" \
@@ -100,15 +100,15 @@ for ARCH in "${ARCH_LIST[@]}"; do
     DSYM_PATHS+=("$STAGED_DSYM")
     continue
   fi
-  BIN_DIR=$(codexbar_swiftpm_bin_path release "$ARCH")
-  DSYM_PATHS+=("$(codexbar_resolve_dsym_path "$DSYM_STAGE_ROOT" "$BIN_DIR" "$APP_NAME" "$ARCH")")
+  BIN_DIR=$(agentsbar_swiftpm_bin_path release "$ARCH")
+  DSYM_PATHS+=("$(agentsbar_resolve_dsym_path "$DSYM_STAGE_ROOT" "$BIN_DIR" "$APP_NAME" "$ARCH")")
 done
 
 DSYM_PATH="${DSYM_PATHS[0]}"
 DSYM_DWARF_PATHS=()
 for ((index = 0; index < ${#ARCH_LIST[@]}; index++)); do
   ARCH="${ARCH_LIST[$index]}"
-  if ! ARCH_DSYM=$(codexbar_require_dsym_dwarf_for_arch "${DSYM_PATHS[$index]}" "$APP_NAME" "$ARCH"); then
+  if ! ARCH_DSYM=$(agentsbar_require_dsym_dwarf_for_arch "${DSYM_PATHS[$index]}" "$APP_NAME" "$ARCH"); then
     exit 1
   fi
   DSYM_DWARF_PATHS+=("$ARCH_DSYM")
@@ -128,7 +128,7 @@ if [[ ! -d "$DSYM_PATH" ]]; then
   echo "Missing dSYM at SwiftPM-reported path: $DSYM_PATH" >&2
   exit 1
 fi
-codexbar_verify_dsym_matches_binary \
+agentsbar_verify_dsym_matches_binary \
   "$APP_BUNDLE/Contents/MacOS/$APP_NAME" \
   "$DSYM_PATH/Contents/Resources/DWARF/$APP_NAME" \
   "${ARCH_LIST[@]}"

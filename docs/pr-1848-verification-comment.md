@@ -1,6 +1,6 @@
 ## Maintainer verification (2026-07-03)
 
-Local current-main port of https://github.com/steipete/CodexBar/pull/1848. This fixes the background browser-launch regression in https://github.com/steipete/CodexBar/issues/1844; primary OAuth storage discovery remains tracked by https://github.com/steipete/CodexBar/issues/1823.
+Local current-main port of https://github.com/johanvillalbab/agentsbar/pull/1848. This fixes the background browser-launch regression in https://github.com/johanvillalbab/agentsbar/issues/1844; primary OAuth storage discovery remains tracked by https://github.com/johanvillalbab/agentsbar/issues/1823.
 
 ### Focused regression proof
 
@@ -38,10 +38,10 @@ The verifier used only synthetic data under a unique temporary directory:
 - disposable `HOME` and `CFFIXED_USER_HOME`
 - disposable keychain passed directly to `/usr/bin/security`
 - general Security.framework/cache keychain access disabled
-- isolated `.claude/.credentials.json` and CodexBar config
+- isolated `.claude/.credentials.json` and AgentsBar config
 - synthetic `claude` executable that records benign discovery separately from `/status` touch
 
-The packaged `CodexBarCLI` exited 3 with the MCP-only guidance, no `/status` or browser/open canary appeared, and the user keychain search list was unchanged. The packaged `CodexBar.app` then exercised the synthetic CLI with `--version`, stayed running for five seconds after discovery, and still sent no `/status` or browser/open touch.
+The packaged `AgentsBarCLI` exited 3 with the MCP-only guidance, no `/status` or browser/open canary appeared, and the user keychain search list was unchanged. The packaged `AgentsBar.app` then exercised the synthetic CLI with `--version`, stayed running for five seconds after discovery, and still sent no `/status` or browser/open touch.
 
 For the explicit recovery path, I launched the same isolated built app, selected the real Claude tab, and clicked Refresh. Before the click the invocation log contained only `--version`; after the click it received `/status`, while the browser/open canary remained untouched. This proves user Refresh remains interaction-aware without weakening the background guard.
 

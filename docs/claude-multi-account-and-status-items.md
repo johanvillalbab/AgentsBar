@@ -10,9 +10,9 @@ read_when:
 
 Status: **Phase 1 account display implemented; Phase 2 explicit account activation accepted.**
 
-Related: [#1756](https://github.com/steipete/CodexBar/issues/1756),
-[#1268](https://github.com/steipete/CodexBar/issues/1268), and the bounded Claude sign-in repair in
-[#1811](https://github.com/steipete/CodexBar/pull/1811).
+Related: [#1756](https://github.com/johanvillalbab/agentsbar/issues/1756),
+[#1268](https://github.com/johanvillalbab/agentsbar/issues/1268), and the bounded Claude sign-in repair in
+[#1811](https://github.com/johanvillalbab/agentsbar/pull/1811).
 
 ## Accepted direction
 
@@ -23,18 +23,18 @@ Related: [#1756](https://github.com/steipete/CodexBar/issues/1756),
 4. Allow an explicit click on an inactive account card to invoke exactly `cswap --switch-to <slot> --json`. Keep
    automatic switching and session launching out of scope.
 
-This solves the durable OAuth refresh problem without making CodexBar a second credential vault. It also avoids a
+This solves the durable OAuth refresh problem without making AgentsBar a second credential vault. It also avoids a
 Claude-only status item implementation that would need to be redesigned for Codex and other providers.
 
 ![Proposed multi-account settings and status items](screenshots/claude-multi-account-status-items-proposal.svg)
 
 ## Current architecture and gap
 
-CodexBar has three account concepts today:
+AgentsBar has three account concepts today:
 
-- The ambient Claude OAuth credential is routed from CodexBar's cache, Claude Code's credentials file, or Claude
+- The ambient Claude OAuth credential is routed from AgentsBar's cache, Claude Code's credentials file, or Claude
   Code's Keychain item. It represents one active credential. Claude Code-owned expired credentials delegate refresh
-  back to the CLI; CodexBar-owned cached credentials can refresh directly.
+  back to the CLI; AgentsBar-owned cached credentials can refresh directly.
 - `ProviderTokenAccount` stores a label and one token plus optional provider metadata. It has no refresh token or
   expiry model. Claude entries therefore work for session cookies, Admin API keys, or short-lived OAuth access tokens,
   but they are not durable multi-subscription OAuth sessions.
@@ -42,12 +42,12 @@ CodexBar has three account concepts today:
   Status items remain provider-scoped: `StatusItemIdentity` has only `merged` and `provider`, and
   `statusItems` is keyed by `UsageProvider`.
 
-The recently merged [#1800](https://github.com/steipete/CodexBar/pull/1800) scopes Claude OAuth history to the routed
-Keychain identity. [#1776](https://github.com/steipete/CodexBar/pull/1776) prevents CLI-runtime usage refreshes from
+The recently merged [#1800](https://github.com/johanvillalbab/agentsbar/pull/1800) scopes Claude OAuth history to the routed
+Keychain identity. [#1776](https://github.com/johanvillalbab/agentsbar/pull/1776) prevents CLI-runtime usage refreshes from
 delegating credential repair to Claude Code, while app and user-initiated repair remain available. Both changes improve
 single-active-account correctness; neither discovers or displays multiple subscriptions.
 
-The closed [#1707](https://github.com/steipete/CodexBar/pull/1707) should not be revived. It coupled account discovery,
+The closed [#1707](https://github.com/johanvillalbab/agentsbar/pull/1707) should not be revived. It coupled account discovery,
 credential resolution, provider routing, menu rendering, and animation across a large patch while broadening
 Keychain and prompt behavior. The safer seam is a credential-free usage adapter first.
 
@@ -55,16 +55,16 @@ Keychain and prompt behavior. The safer seam is a credential-free usage adapter 
 
 | Option | Credential ownership | Durability | Risk | Recommendation |
 | --- | --- | --- | --- | --- |
-| First-party OAuth account vault | CodexBar | High | New login, refresh, storage, revocation, migration, and security surface | Defer |
+| First-party OAuth account vault | AgentsBar | High | New login, refresh, storage, revocation, migration, and security surface | Defer |
 | Bounded `claude-swap` adapter | `claude-swap` | High | External executable and schema dependency | **Phase 1–2** |
 | Discover Claude Code Keychain entries | Claude Code / ambiguous | Unknown | Undocumented enumeration; prompt and identity hazards | Reject |
-| Existing token accounts | CodexBar config | Low for OAuth | Access token expires without refresh metadata | Keep for current cookie/API-key uses |
+| Existing token accounts | AgentsBar config | Low for OAuth | Access token expires without refresh metadata | Keep for current cookie/API-key uses |
 
 As of [`claude-swap` v0.18.0](https://github.com/realiti4/claude-swap/releases/tag/v0.18.0),
 `cswap --list --json` still returns a versioned object with `schemaVersion: 1`, an active account number, account slots,
 redaction-sensitive email labels, 5-hour and 7-day usage percentages, optional model-scoped weekly windows, and reset
 timestamps. Handled failures return an error object and non-zero exit. Direct switching returns the same versioned
-envelope. CodexBar does not need
+envelope. AgentsBar does not need
 `--token-status`, credential files, Keychain access, or raw OAuth values for display or explicit activation.
 
 ## Phase 1 adapter contract
@@ -79,7 +79,7 @@ envelope. CodexBar does not need
   windows.
 - Treat email as display-only sensitive data. Never log or persist it. Respect Hide Personal Info.
 - Use the source-issued numeric slot for identity (`claude-swap:<slot>`), not email or credential-derived values.
-- CodexBar never reads `claude-swap` storage, Claude Code storage, environment credentials, or Keychain entries. The
+- AgentsBar never reads `claude-swap` storage, Claude Code storage, environment credentials, or Keychain entries. The
   subprocess remains solely responsible for its own credential access. The adapter copies only allow-listed
   usage/identity fields into its model and never logs or persists raw stdout.
 - Never run `auto`, `run`, `--switch`, `--switch-to`, `--add-account`, export, import, purge, or any other command in
@@ -87,7 +87,7 @@ envelope. CodexBar does not need
 - Isolate adapter failure from ambient Claude usage. Users without `claude-swap` see no behavior change.
 
 The executable is an optional external dependency, not a bundled component. Preferences should show detected version,
-last refresh, adapter errors, and a link to the upstream project; CodexBar should not install or update it.
+last refresh, adapter errors, and a link to the upstream project; AgentsBar should not install or update it.
 
 ## Phase 2 explicit activation contract
 
@@ -156,7 +156,7 @@ Icons semantics must be decided before implementation.
 
 The mock above shows the recommended mode and its Merge Icons conflict. It is intentionally a decision artifact, not
 an implementation screenshot. The following packaged synthetic-account proof verifies the bounded current behavior:
-the account action is now named “Sign in with Claude Code…” and no longer claims it will add a durable CodexBar account.
+the account action is now named “Sign in with Claude Code…” and no longer claims it will add a durable AgentsBar account.
 No real credential, browser session, or provider call was used.
 
 ![Packaged synthetic Claude sign-in proof](screenshots/claude-sign-in-synthetic-proof.png)

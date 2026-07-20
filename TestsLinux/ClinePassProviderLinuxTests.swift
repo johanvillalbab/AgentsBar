@@ -3,8 +3,8 @@ import Foundation
 import FoundationNetworking
 #endif
 import Testing
-@testable import CodexBarCLI
-@testable import CodexBarCore
+@testable import AgentsBarCLI
+@testable import AgentsBarCore
 
 struct ClinePassProviderLinuxTests {
     @Test

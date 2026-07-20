@@ -2,11 +2,11 @@
 set -euo pipefail
 
 resolve_package_signing_mode() {
-  local requested="${CODEXBAR_SIGNING:-adhoc}"
+  local requested="${AGENTSBAR_SIGNING:-adhoc}"
   case "$requested" in
     adhoc|identity) ;;
     *)
-      echo "ERROR: Unsupported CODEXBAR_SIGNING: $requested (expected adhoc or identity)" >&2
+      echo "ERROR: Unsupported AGENTSBAR_SIGNING: $requested (expected adhoc or identity)" >&2
       return 1
       ;;
   esac
@@ -33,7 +33,7 @@ verify_packaged_app_integrity() {
 }
 
 CONF=${1:-release}
-ALLOW_LLDB=${CODEXBAR_ALLOW_LLDB:-0}
+ALLOW_LLDB=${AGENTSBAR_ALLOW_LLDB:-0}
 SIGNING_MODE=
 resolve_package_signing_mode
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
@@ -53,7 +53,7 @@ source "$ROOT/Scripts/package_product_paths.sh"
 source "$ROOT/Scripts/sparkle_signing_paths.sh"
 
 # Clean build only when explicitly requested (slower).
-if [[ "${CODEXBAR_FORCE_CLEAN:-0}" == "1" ]]; then
+if [[ "${AGENTSBAR_FORCE_CLEAN:-0}" == "1" ]]; then
   if [[ -d "$ROOT/.build" ]]; then
     if command -v trash >/dev/null 2>&1; then
       if ! trash "$ROOT/.build"; then
@@ -156,7 +156,7 @@ swiftpm_bin_path() {
   local cache_var="SWIFTPM_BIN_PATH_${arch//[^A-Za-z0-9]/_}"
   if [[ -z "${!cache_var+set}" ]]; then
     local resolved
-    if ! resolved=$(codexbar_swiftpm_bin_path "$CONF" "$arch"); then
+    if ! resolved=$(agentsbar_swiftpm_bin_path "$CONF" "$arch"); then
       return 1
     fi
     printf -v "$cache_var" '%s' "$resolved"
@@ -182,8 +182,8 @@ stage_build_products() {
 
   stage_dir="$PRODUCT_STAGE_ROOT/$arch"
   mkdir -p "$stage_dir"
-  for name in CodexBar CodexBarCLI CodexBarClaudeWatchdog; do
-    if ! product=$(codexbar_require_product_file "$bin_dir" "$name" "$arch"); then
+  for name in AgentsBar AgentsBarCLI AgentsBarClaudeWatchdog; do
+    if ! product=$(agentsbar_require_product_file "$bin_dir" "$name" "$arch"); then
       return 1
     fi
     if ! binary_has_arch "$product" "$arch"; then
@@ -192,8 +192,8 @@ stage_build_products() {
     fi
     cp "$product" "$stage_dir/$name"
   done
-  if [[ -d "$bin_dir/CodexBar.dSYM" ]]; then
-    cp -R "$bin_dir/CodexBar.dSYM" "$stage_dir/"
+  if [[ -d "$bin_dir/AgentsBar.dSYM" ]]; then
+    cp -R "$bin_dir/AgentsBar.dSYM" "$stage_dir/"
   fi
 }
 
@@ -202,8 +202,8 @@ for ARCH in "${ARCH_LIST[@]}"; do
   stage_build_products "$ARCH"
 done
 
-APP_FINAL="$ROOT/CodexBar.app"
-APP_STAGE="$ROOT/.build/package/CodexBar.app"
+APP_FINAL="$ROOT/AgentsBar.app"
+APP_STAGE="$ROOT/.build/package/AgentsBar.app"
 rm -rf "$APP_STAGE"
 APP="$APP_STAGE"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources" "$APP/Contents/Frameworks"
@@ -216,11 +216,11 @@ if [[ -f "$ICON_SOURCE" ]]; then
   iconutil --convert icns --output "$ICON_TARGET" "$ICON_SOURCE"
 fi
 
-BUNDLE_ID="com.steipete.codexbar"
-FEED_URL="https://raw.githubusercontent.com/steipete/CodexBar/main/appcast.xml"
+BUNDLE_ID="com.steipete.agentsbar"
+FEED_URL="https://raw.githubusercontent.com/johanvillalbab/agentsbar/main/appcast.xml"
 AUTO_CHECKS=true
 if [[ "$LOWER_CONF" == "debug" ]]; then
-  BUNDLE_ID="com.steipete.codexbar.debug"
+  BUNDLE_ID="com.steipete.agentsbar.debug"
   FEED_URL=""
   AUTO_CHECKS=false
 fi
@@ -230,16 +230,16 @@ if [[ "$SIGNING_MODE" == "adhoc" ]]; then
 fi
 WIDGET_BUNDLE_ID="${BUNDLE_ID}.widget"
 APP_TEAM_ID="${APP_TEAM_ID:-Y5PE65HELJ}"
-APP_GROUP_ID="${APP_TEAM_ID}.com.steipete.codexbar"
+APP_GROUP_ID="${APP_TEAM_ID}.com.steipete.agentsbar"
 if [[ "$BUNDLE_ID" == *".debug"* ]]; then
-  APP_GROUP_ID="${APP_TEAM_ID}.com.steipete.codexbar.debug"
+  APP_GROUP_ID="${APP_TEAM_ID}.com.steipete.agentsbar.debug"
 fi
 ENTITLEMENTS_DIR="$ROOT/.build/entitlements"
-APP_ENTITLEMENTS="${ENTITLEMENTS_DIR}/CodexBar.entitlements"
-WIDGET_ENTITLEMENTS="${ENTITLEMENTS_DIR}/CodexBarWidget.entitlements"
+APP_ENTITLEMENTS="${ENTITLEMENTS_DIR}/AgentsBar.entitlements"
+WIDGET_ENTITLEMENTS="${ENTITLEMENTS_DIR}/AgentsBarWidget.entitlements"
 mkdir -p "$ENTITLEMENTS_DIR"
 if [[ "$ALLOW_LLDB" == "1" && "$LOWER_CONF" != "debug" ]]; then
-  echo "ERROR: CODEXBAR_ALLOW_LLDB requires debug configuration" >&2
+  echo "ERROR: AGENTSBAR_ALLOW_LLDB requires debug configuration" >&2
   exit 1
 fi
 cat > "$APP_ENTITLEMENTS" <<PLIST
@@ -277,10 +277,10 @@ cat > "$APP/Contents/Info.plist" <<PLIST
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>CFBundleName</key><string>CodexBar</string>
-    <key>CFBundleDisplayName</key><string>CodexBar</string>
+    <key>CFBundleName</key><string>AgentsBar</string>
+    <key>CFBundleDisplayName</key><string>AgentsBar</string>
     <key>CFBundleIdentifier</key><string>${BUNDLE_ID}</string>
-    <key>CFBundleExecutable</key><string>CodexBar</string>
+    <key>CFBundleExecutable</key><string>AgentsBar</string>
     <key>CFBundlePackageType</key><string>APPL</string>
     <key>CFBundleShortVersionString</key><string>${MARKETING_VERSION}</string>
     <key>CFBundleVersion</key><string>${BUILD_NUMBER}</string>
@@ -291,14 +291,14 @@ cat > "$APP/Contents/Info.plist" <<PLIST
     <key>SUFeedURL</key><string>${FEED_URL}</string>
     <key>SUPublicEDKey</key><string>AGCY8w5vHirVfGGDGc8Szc5iuOqupZSh9pMj/Qs67XI=</string>
     <key>SUEnableAutomaticChecks</key><${AUTO_CHECKS}/>
-    <key>CodexBuildTimestamp</key><string>${BUILD_TIMESTAMP}</string>
-    <key>CodexGitCommit</key><string>${GIT_COMMIT}</string>
-    <key>CodexBarTeamID</key><string>${APP_TEAM_ID}</string>
+    <key>AgentsBarBuildTimestamp</key><string>${BUILD_TIMESTAMP}</string>
+    <key>AgentsBarGitCommit</key><string>${GIT_COMMIT}</string>
+    <key>AgentsBarTeamID</key><string>${APP_TEAM_ID}</string>
     <key>UTExportedTypeDeclarations</key>
     <array>
         <dict>
-            <key>UTTypeIdentifier</key><string>com.steipete.codexbar.menu-layout-item</string>
-            <key>UTTypeDescription</key><string>CodexBar menu bar layout token</string>
+            <key>UTTypeIdentifier</key><string>com.steipete.agentsbar.menu-layout-item</string>
+            <key>UTTypeDescription</key><string>AgentsBar menu bar layout token</string>
             <key>UTTypeConformsTo</key>
             <array>
                 <string>public.data</string>
@@ -317,7 +317,7 @@ resolve_binary_path() {
   local arch="$2"
   local bin_dir candidate
   swiftpm_bin_path "$arch" bin_dir
-  if ! candidate=$(codexbar_resolve_staged_or_reported_file \
+  if ! candidate=$(agentsbar_resolve_staged_or_reported_file \
     "$PRODUCT_STAGE_ROOT" "$bin_dir" "$name" "$arch"); then
     return 1
   fi
@@ -381,7 +381,7 @@ strip_release_binary() {
 
 ensure_widget_extension_project() {
   local spec="$ROOT/WidgetExtension/project.yml"
-  local project_dir="$ROOT/WidgetExtension/CodexBarWidgetExtension.xcodeproj"
+  local project_dir="$ROOT/WidgetExtension/AgentsBarWidgetExtension.xcodeproj"
   if [[ -f "$project_dir/project.pbxproj" ]]; then
     return
   fi
@@ -404,16 +404,16 @@ build_widget_extension() {
   ensure_widget_extension_project
 
   local derived_dir="$ROOT/.build/xcode-widget-extension-${LOWER_CONF}"
-  local project_dir="$ROOT/WidgetExtension/CodexBarWidgetExtension.xcodeproj"
+  local project_dir="$ROOT/WidgetExtension/AgentsBarWidgetExtension.xcodeproj"
   local build_log="$derived_dir/xcodebuild.log"
-  local timeout_seconds="${CODEXBAR_WIDGET_EXTENSION_TIMEOUT_SECONDS:-900}"
+  local timeout_seconds="${AGENTSBAR_WIDGET_EXTENSION_TIMEOUT_SECONDS:-900}"
   local archs="${ARCH_LIST[*]}"
 
   mkdir -p "$derived_dir"
-  echo "Building CodexBarWidget Xcode extension (${xcode_conf}, ${archs})." >&2
+  echo "Building AgentsBarWidget Xcode extension (${xcode_conf}, ${archs})." >&2
   xcodebuild \
     -project "$project_dir" \
-    -scheme CodexBarWidgetExtension \
+    -scheme AgentsBarWidgetExtension \
     -configuration "$xcode_conf" \
     -destination "generic/platform=macOS" \
     -derivedDataPath "$derived_dir" \
@@ -421,8 +421,8 @@ build_widget_extension() {
     -disableAutomaticPackageResolution \
     -skipMacroValidation \
     -skipPackagePluginValidation \
-    CODEXBAR_WIDGET_BUNDLE_ID="$WIDGET_BUNDLE_ID" \
-    CODEXBAR_TEAM_ID="$APP_TEAM_ID" \
+    AGENTSBAR_WIDGET_BUNDLE_ID="$WIDGET_BUNDLE_ID" \
+    AGENTSBAR_TEAM_ID="$APP_TEAM_ID" \
     MARKETING_VERSION="$MARKETING_VERSION" \
     CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
     CODE_SIGNING_ALLOWED=NO \
@@ -437,24 +437,24 @@ build_widget_extension() {
       kill "$xcodebuild_pid" 2>/dev/null || true
       wait "$xcodebuild_pid" 2>/dev/null || true
       tail -80 "$build_log" >&2 || true
-      echo "ERROR: Timed out building CodexBarWidget extension after ${timeout_seconds}s" >&2
+      echo "ERROR: Timed out building AgentsBarWidget extension after ${timeout_seconds}s" >&2
       exit 1
     fi
     sleep 5
     elapsed=$((elapsed + 5))
     if (( elapsed > 0 && elapsed % 60 == 0 )); then
-      echo "Still building CodexBarWidget extension (${elapsed}s)..." >&2
+      echo "Still building AgentsBarWidget extension (${elapsed}s)..." >&2
     fi
   done
   if ! wait "$xcodebuild_pid"; then
     tail -120 "$build_log" >&2 || true
-    echo "ERROR: Failed to build CodexBarWidget extension" >&2
+    echo "ERROR: Failed to build AgentsBarWidget extension" >&2
     exit 1
   fi
 
-  local appex="$derived_dir/Build/Products/${xcode_conf}/CodexBarWidget.appex"
-  if [[ ! -f "$appex/Contents/MacOS/CodexBarWidget" ]]; then
-    echo "ERROR: Missing Xcode-built CodexBarWidget.appex at ${appex}" >&2
+  local appex="$derived_dir/Build/Products/${xcode_conf}/AgentsBarWidget.appex"
+  if [[ ! -f "$appex/Contents/MacOS/AgentsBarWidget" ]]; then
+    echo "ERROR: Missing Xcode-built AgentsBarWidget.appex at ${appex}" >&2
     exit 1
   fi
   echo "$appex"
@@ -463,31 +463,31 @@ build_widget_extension() {
 install_widget_extension() {
   local src_appex
   src_appex="$(build_widget_extension)"
-  local widget_app="$APP/Contents/PlugIns/CodexBarWidget.appex"
+  local widget_app="$APP/Contents/PlugIns/AgentsBarWidget.appex"
   rm -rf "$widget_app"
   mkdir -p "$APP/Contents/PlugIns"
   cp -R "$src_appex" "$widget_app"
-  verify_binary_arches "$widget_app/Contents/MacOS/CodexBarWidget" "${ARCH_LIST[@]}"
+  verify_binary_arches "$widget_app/Contents/MacOS/AgentsBarWidget" "${ARCH_LIST[@]}"
 }
 
-install_binary "CodexBar" "$APP/Contents/MacOS/CodexBar"
-strip_release_binary "$APP/Contents/MacOS/CodexBar"
-# Ship CodexBarCLI alongside the app for easy symlinking.
-install_binary "CodexBarCLI" "$APP/Contents/Helpers/CodexBarCLI"
-strip_release_binary "$APP/Contents/Helpers/CodexBarCLI"
-# Watchdog helper: ensures `claude` probes die when CodexBar crashes/gets killed.
-install_binary "CodexBarClaudeWatchdog" "$APP/Contents/Helpers/CodexBarClaudeWatchdog"
-strip_release_binary "$APP/Contents/Helpers/CodexBarClaudeWatchdog"
+install_binary "AgentsBar" "$APP/Contents/MacOS/AgentsBar"
+strip_release_binary "$APP/Contents/MacOS/AgentsBar"
+# Ship AgentsBarCLI alongside the app for easy symlinking.
+install_binary "AgentsBarCLI" "$APP/Contents/Helpers/AgentsBarCLI"
+strip_release_binary "$APP/Contents/Helpers/AgentsBarCLI"
+# Watchdog helper: ensures `claude` probes die when AgentsBar crashes/gets killed.
+install_binary "AgentsBarClaudeWatchdog" "$APP/Contents/Helpers/AgentsBarClaudeWatchdog"
+strip_release_binary "$APP/Contents/Helpers/AgentsBarClaudeWatchdog"
 install_widget_extension
-strip_release_binary "$APP/Contents/PlugIns/CodexBarWidget.appex/Contents/MacOS/CodexBarWidget"
+strip_release_binary "$APP/Contents/PlugIns/AgentsBarWidget.appex/Contents/MacOS/AgentsBarWidget"
 
 swiftpm_bin_path "${ARCH_LIST[0]}" PREFERRED_BUILD_DIR
 
 # Embed Sparkle.framework
-SPARKLE_SOURCE=$(codexbar_require_product_directory "$PREFERRED_BUILD_DIR" Sparkle.framework packaging)
+SPARKLE_SOURCE=$(agentsbar_require_product_directory "$PREFERRED_BUILD_DIR" Sparkle.framework packaging)
 cp -R "$SPARKLE_SOURCE" "$APP/Contents/Frameworks/"
 chmod -R a+rX "$APP/Contents/Frameworks/Sparkle.framework"
-install_name_tool -add_rpath "@executable_path/../Frameworks" "$APP/Contents/MacOS/CodexBar"
+install_name_tool -add_rpath "@executable_path/../Frameworks" "$APP/Contents/MacOS/AgentsBar"
 # Re-sign Sparkle and all nested components with the selected package identity.
 SPARKLE="$APP/Contents/Frameworks/Sparkle.framework"
 if [[ "$SIGNING_MODE" == "adhoc" ]]; then
@@ -502,7 +502,7 @@ else
 fi
 function resign() { codesign "${CODESIGN_ARGS[@]}" "$1"; }
 # Validate Sparkle's nested layout before signing so framework layout drift fails clearly.
-SPARKLE_SIGNING_TARGETS=$(codexbar_sparkle_signing_targets "$SPARKLE")
+SPARKLE_SIGNING_TARGETS=$(agentsbar_sparkle_signing_targets "$SPARKLE")
 while IFS= read -r SPARKLE_TARGET; do
   resign "$SPARKLE_TARGET"
 done <<<"$SPARKLE_SIGNING_TARGETS"
@@ -512,7 +512,7 @@ if [[ -f "$ICON_TARGET" ]]; then
 fi
 
 # Bundle app resources (provider icons, etc.).
-APP_RESOURCES_DIR="$ROOT/Sources/CodexBar/Resources"
+APP_RESOURCES_DIR="$ROOT/Sources/AgentsBar/Resources"
 if [[ -d "$APP_RESOURCES_DIR" ]]; then
   cp -R "$APP_RESOURCES_DIR/." "$APP/Contents/Resources/"
 fi
@@ -545,21 +545,21 @@ xattr -cr "$APP"
 find "$APP" -name '._*' -delete
 
 # Sign helper binaries if present
-if [[ -f "${APP}/Contents/Helpers/CodexBarCLI" ]]; then
-  codesign "${CODESIGN_ARGS[@]}" "${APP}/Contents/Helpers/CodexBarCLI"
+if [[ -f "${APP}/Contents/Helpers/AgentsBarCLI" ]]; then
+  codesign "${CODESIGN_ARGS[@]}" "${APP}/Contents/Helpers/AgentsBarCLI"
 fi
-if [[ -f "${APP}/Contents/Helpers/CodexBarClaudeWatchdog" ]]; then
-  codesign "${CODESIGN_ARGS[@]}" "${APP}/Contents/Helpers/CodexBarClaudeWatchdog"
+if [[ -f "${APP}/Contents/Helpers/AgentsBarClaudeWatchdog" ]]; then
+  codesign "${CODESIGN_ARGS[@]}" "${APP}/Contents/Helpers/AgentsBarClaudeWatchdog"
 fi
 
 # Sign widget extension if present
-if [[ -d "${APP}/Contents/PlugIns/CodexBarWidget.appex" ]]; then
+if [[ -d "${APP}/Contents/PlugIns/AgentsBarWidget.appex" ]]; then
   codesign "${CODESIGN_ARGS[@]}" \
     --entitlements "$WIDGET_ENTITLEMENTS" \
-    "$APP/Contents/PlugIns/CodexBarWidget.appex/Contents/MacOS/CodexBarWidget"
+    "$APP/Contents/PlugIns/AgentsBarWidget.appex/Contents/MacOS/AgentsBarWidget"
   codesign "${CODESIGN_ARGS[@]}" \
     --entitlements "$WIDGET_ENTITLEMENTS" \
-    "$APP/Contents/PlugIns/CodexBarWidget.appex"
+    "$APP/Contents/PlugIns/AgentsBarWidget.appex"
 fi
 
 # Finally sign the app bundle itself

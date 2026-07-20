@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-codexbar_release_arch_label() {
+agentsbar_release_arch_label() {
   local raw="${1:-arm64 x86_64}"
   local normalized
   local has_arm64=0
@@ -31,14 +31,14 @@ codexbar_release_arch_label() {
   printf "macos-%s" "$(printf "%s" "$normalized" | tr ' ' '+')"
 }
 
-codexbar_app_zip_name() {
+agentsbar_app_zip_name() {
   local version=$1
   local arches="${2:-arm64 x86_64}"
-  printf "CodexBar-%s-%s.zip" "$(codexbar_release_arch_label "$arches")" "$version"
+  printf "AgentsBar-%s-%s.zip" "$(agentsbar_release_arch_label "$arches")" "$version"
 }
 
-codexbar_dsym_zip_name() {
+agentsbar_dsym_zip_name() {
   local version=$1
   local arches="${2:-arm64 x86_64}"
-  printf "CodexBar-%s-%s.dSYM.zip" "$(codexbar_release_arch_label "$arches")" "$version"
+  printf "AgentsBar-%s-%s.dSYM.zip" "$(agentsbar_release_arch_label "$arches")" "$version"
 }

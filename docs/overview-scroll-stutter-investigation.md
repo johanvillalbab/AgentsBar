@@ -2,26 +2,26 @@
 
 Status: draft context for external review  
 Date: 2026-06-20  
-Related issue: https://github.com/steipete/CodexBar/issues/1674  
+Related issue: https://github.com/johanvillalbab/agentsbar/issues/1674  
 Candidate PRs:
 
-- Lite row: https://github.com/steipete/CodexBar/pull/1675
-- Rich row: https://github.com/steipete/CodexBar/pull/1676
+- Lite row: https://github.com/johanvillalbab/agentsbar/pull/1675
+- Rich row: https://github.com/johanvillalbab/agentsbar/pull/1676
 
 ## Purpose
 
-This document explains the motivation, evidence, design split, current PR state, and open review questions for the CodexBar Overview menu scroll-stutter work. It is written as a handoff document for a second reviewer, especially Claude, to review both the reasoning and the patch directions without needing to reconstruct the whole GitHub thread.
+This document explains the motivation, evidence, design split, current PR state, and open review questions for the AgentsBar Overview menu scroll-stutter work. It is written as a handoff document for a second reviewer, especially Claude, to review both the reasoning and the patch directions without needing to reconstruct the whole GitHub thread.
 
 The core question is not only "does either patch compile?" The real question is whether we chose the right boundary for reducing scroll-time work inside an `NSMenu` that hosts rich SwiftUI rows.
 
 ## Original Problem
 
-The user-reported symptom is severe scroll jank in the CodexBar home / Overview menu. The problem appears on recent CodexBar builds and on multiple remote latest versions, not just one local install.
+The user-reported symptom is severe scroll jank in the AgentsBar home / Overview menu. The problem appears on recent AgentsBar builds and on multiple remote latest versions, not just one local install.
 
 Observed environment from the local sample:
 
 ```text
-CodexBar 0.37.0 (90)
+AgentsBar 0.37.0 (90)
 macOS 27.0 (26A5353q)
 Main-thread sample duration: 8 seconds, 1 ms interval
 Main-thread sample count: 3440
@@ -60,19 +60,19 @@ The sample stack maps cleanly onto current `origin/main` around commit `8c4bdd63
 
 Key source paths:
 
-- `Sources/CodexBar/StatusItemController+Menu.swift`
+- `Sources/AgentsBar/StatusItemController+Menu.swift`
   - `addOverviewRows` builds each Overview provider row as a custom menu card.
   - It installs provider-detail submenus and click handling.
-- `Sources/CodexBar/StatusItemController+MenuTypes.swift`
+- `Sources/AgentsBar/StatusItemController+MenuTypes.swift`
   - `OverviewMenuCardRowView` is the SwiftUI view rendered inside each Overview row.
   - It subscribes to menu highlight environment.
-- `Sources/CodexBar/MenuCardView.swift`
+- `Sources/AgentsBar/MenuCardView.swift`
   - `UsageMenuCardUsageSectionView` renders usage content.
   - It resolves live menu-card models through `MenuCardRefreshMonitor`.
-- `Sources/CodexBar/InlineUsageDashboardContent.swift`
+- `Sources/AgentsBar/InlineUsageDashboardContent.swift`
   - Uses `LazyVGrid` and mini chart/bar content.
   - This matches the `LazyVGridLayout lengthAndSpacing` sample fragment.
-- `Sources/CodexBar/StatusItemController+OverviewScroll.swift`
+- `Sources/AgentsBar/StatusItemController+OverviewScroll.swift`
   - Handles scroll-wheel navigation on Overview rows.
   - Moves highlight by calling menu highlight paths and posting synthetic mouse movement over row views.
 
@@ -84,7 +84,7 @@ This led to the working hypothesis:
 
 We opened issue #1674:
 
-https://github.com/steipete/CodexBar/issues/1674
+https://github.com/johanvillalbab/agentsbar/issues/1674
 
 Title:
 
@@ -139,7 +139,7 @@ Both PRs are draft PRs because maintainers still need to choose the desired UI/p
 
 ## PR #1675: Lite Row
 
-PR: https://github.com/steipete/CodexBar/pull/1675  
+PR: https://github.com/johanvillalbab/agentsbar/pull/1675  
 Branch: `codex/overview-lite-row`  
 Latest head at the time of this document: `6f680eeb18e37fb329cf7c26b956ded8c967a076`
 
@@ -161,8 +161,8 @@ It intentionally moves rich charts/details out of the Overview row and leaves th
 
 Changed files:
 
-- `Sources/CodexBar/StatusItemController+MenuTypes.swift`
-- `Tests/CodexBarTests/OverviewMenuCardRowViewTests.swift`
+- `Sources/AgentsBar/StatusItemController+MenuTypes.swift`
+- `Tests/AgentsBarTests/OverviewMenuCardRowViewTests.swift`
 
 Key implementation points:
 
@@ -214,7 +214,7 @@ It still lacks an interactive after-fix scroll profile or recording.
 
 ## PR #1676: Rich Row With AppKit Boundary
 
-PR: https://github.com/steipete/CodexBar/pull/1676  
+PR: https://github.com/johanvillalbab/agentsbar/pull/1676  
 Branch: `codex/overview-rich-row`  
 Latest head at the time of this document: `963ed4cf9941cc98300650c5532e7ffcebf1b618`
 
@@ -243,11 +243,11 @@ This follows the `build-macos-apps:appkit-interop` guidance: cross only the narr
 
 Changed files:
 
-- `Sources/CodexBar/StatusItemController+Menu.swift`
-- `Sources/CodexBar/StatusItemController+MenuCardItems.swift`
-- `Sources/CodexBar/StatusItemController+MenuPresentation.swift`
-- `Sources/CodexBar/StatusItemController+MenuTypes.swift`
-- `Tests/CodexBarTests/MenuCardViewRecyclingTests.swift`
+- `Sources/AgentsBar/StatusItemController+Menu.swift`
+- `Sources/AgentsBar/StatusItemController+MenuCardItems.swift`
+- `Sources/AgentsBar/StatusItemController+MenuPresentation.swift`
+- `Sources/AgentsBar/StatusItemController+MenuTypes.swift`
+- `Tests/AgentsBarTests/MenuCardViewRecyclingTests.swift`
 
 Key implementation points:
 
@@ -284,8 +284,8 @@ swift test --filter "highlight"
 swift build
 make check
 git diff --check
-CODEXBAR_SIGNING=adhoc ./Scripts/package_app.sh debug
-codesign --verify --deep --strict --verbose=2 CodexBar.app
+AGENTSBAR_SIGNING=adhoc ./Scripts/package_app.sh debug
+codesign --verify --deep --strict --verbose=2 AgentsBar.app
 ```
 
 The follow-up validation was run on:
@@ -425,16 +425,16 @@ On `main`, only the unchanged baseline symbols (`addOverviewRows`, `OverviewMenu
 
 For Lite row review:
 
-- Start with `OverviewMenuCardRowView` in `Sources/CodexBar/StatusItemController+MenuTypes.swift`.
+- Start with `OverviewMenuCardRowView` in `Sources/AgentsBar/StatusItemController+MenuTypes.swift`.
 - Check `resolvedLiveModel(refreshMonitor:)`.
 - Check `LiteSummary.make(for:)`.
 - Check `OverviewMenuCardRowViewTests`.
 
 For Rich row review:
 
-- Start with `OverviewMenuRowHostingView` in `Sources/CodexBar/StatusItemController+MenuPresentation.swift`.
-- Check `makeOverviewMenuRowItem` in `Sources/CodexBar/StatusItemController+MenuCardItems.swift`.
-- Check `addOverviewRows` in `Sources/CodexBar/StatusItemController+Menu.swift`.
+- Start with `OverviewMenuRowHostingView` in `Sources/AgentsBar/StatusItemController+MenuPresentation.swift`.
+- Check `makeOverviewMenuRowItem` in `Sources/AgentsBar/StatusItemController+MenuCardItems.swift`.
+- Check `addOverviewRows` in `Sources/AgentsBar/StatusItemController+Menu.swift`.
 - Check `MenuCardViewRecyclingTests`.
 
 For shared behavior:
@@ -485,7 +485,7 @@ Findings:
 
 ### Implemented direction: AppKit/GPU selection (`GPUSelectionHostingView`)
 
-`Sources/CodexBar/MenuCardGPUSelectionView.swift` renders the selected look without any SwiftUI work:
+`Sources/AgentsBar/MenuCardGPUSelectionView.swift` renders the selected look without any SwiftUI work:
 
 1. an `NSVisualEffectView(.selection)` background (the existing in-repo pattern from
    `PersistentRefreshMenuView`), crossfaded via Core Animation so the highlight glides between rows
