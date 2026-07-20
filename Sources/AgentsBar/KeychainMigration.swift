@@ -22,16 +22,16 @@ enum KeychainMigration {
     private static let legacyKeychainService = "com.steipete.CodexBar"
 
     static let itemsToMigrate: [MigrationItem] = [
-        MigrationItem(service: self.legacyKeychainService, account: "codex-cookie"),
-        MigrationItem(service: self.legacyKeychainService, account: "claude-cookie"),
-        MigrationItem(service: self.legacyKeychainService, account: "cursor-cookie"),
-        MigrationItem(service: self.legacyKeychainService, account: "factory-cookie"),
-        MigrationItem(service: self.legacyKeychainService, account: "minimax-cookie"),
-        MigrationItem(service: self.legacyKeychainService, account: "minimax-api-token"),
-        MigrationItem(service: self.legacyKeychainService, account: "augment-cookie"),
-        MigrationItem(service: self.legacyKeychainService, account: "copilot-api-token"),
-        MigrationItem(service: self.legacyKeychainService, account: "zai-api-token"),
-        MigrationItem(service: self.legacyKeychainService, account: "synthetic-api-key"),
+        MigrationItem(service: legacyKeychainService, account: "codex-cookie"),
+        MigrationItem(service: legacyKeychainService, account: "claude-cookie"),
+        MigrationItem(service: legacyKeychainService, account: "cursor-cookie"),
+        MigrationItem(service: legacyKeychainService, account: "factory-cookie"),
+        MigrationItem(service: legacyKeychainService, account: "minimax-cookie"),
+        MigrationItem(service: legacyKeychainService, account: "minimax-api-token"),
+        MigrationItem(service: legacyKeychainService, account: "augment-cookie"),
+        MigrationItem(service: legacyKeychainService, account: "copilot-api-token"),
+        MigrationItem(service: legacyKeychainService, account: "zai-api-token"),
+        MigrationItem(service: legacyKeychainService, account: "synthetic-api-key"),
     ]
 
     /// Run migration once per installation
