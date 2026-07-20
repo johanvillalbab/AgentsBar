@@ -1,6 +1,6 @@
 # Vision
 
-CodexBar is the menu bar control surface for AI provider limits, credits, spend, status, and reset windows. It should keep adding useful provider coverage while preserving fast refreshes, privacy-first local data handling, and shared provider-driven UI instead of one-off surfaces.
+AgentsBar is the menu bar control surface for AI provider limits, credits, spend, status, and reset windows. It should keep adding useful provider coverage while preserving fast refreshes, privacy-first local data handling, and shared provider-driven UI instead of one-off surfaces.
 
 ## Merge by Default
 

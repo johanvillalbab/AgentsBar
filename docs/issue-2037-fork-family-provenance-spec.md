@@ -1,20 +1,20 @@
 # Spec: Scan-wide fork-family event provenance for Ultra overcounting (issue #2037)
 
-- **Issue:** [steipete/CodexBar#2037](https://github.com/steipete/CodexBar/issues/2037) — Ultra / forked-session token overcounting
+- **Issue:** [johanvillalbab/agentsbar#2037](https://github.com/johanvillalbab/agentsbar/issues/2037) — Ultra / forked-session token overcounting
 - **Status:** Proposed (architecture redesign; fixture-gated) — rev 8a
 - **P0 local corpus:** `docs/issue-2037-p0-local-corpus-findings.md` (provisional Codex locks from `~/.codex` forks; Ultra golden still open)
-- **Supersedes as the canonical fix:** file-local-only approaches for closing #2037, including claiming [#2066](https://github.com/steipete/CodexBar/pull/2066) as a full fix
-- **Related:** [#2066](https://github.com/steipete/CodexBar/pull/2066) (Codex intra-file containment — interim / non-closing at best), [#2043](https://github.com/steipete/CodexBar/pull/2043) / [#2059](https://github.com/steipete/CodexBar/pull/2059) (Pi file-local reconciliation merged then reverted), #968, #1062, #1164 / `45b68c34`
-- **Affected code (expected):** `Sources/CodexBarCore/Vendored/CostUsage/` (Codex first); Pi only if the sanitized corpus proves the same shape
+- **Supersedes as the canonical fix:** file-local-only approaches for closing #2037, including claiming [#2066](https://github.com/johanvillalbab/agentsbar/pull/2066) as a full fix
+- **Related:** [#2066](https://github.com/johanvillalbab/agentsbar/pull/2066) (Codex intra-file containment — interim / non-closing at best), [#2043](https://github.com/johanvillalbab/agentsbar/pull/2043) / [#2059](https://github.com/johanvillalbab/agentsbar/pull/2059) (Pi file-local reconciliation merged then reverted), #968, #1062, #1164 / `45b68c34`
+- **Affected code (expected):** `Sources/AgentsBarCore/Vendored/CostUsage/` (Codex first); Pi only if the sanitized corpus proves the same shape
 
 ## 0. Framing (read first)
 
-After [#2059](https://github.com/steipete/CodexBar/pull/2059), the repository owner retained #2037 as the canonical tracker. A replacement must provide:
+After [#2059](https://github.com/johanvillalbab/agentsbar/pull/2059), the repository owner retained #2037 as the canonical tracker. A replacement must provide:
 
 1. **Cross-file fork-family / stable event provenance** — copied ancestor events across related fork files must not be charged once per file.
 2. **Proof against a sanitized real fork corpus** — exact tokens and nonlinear pricing, not synthetic-only confidence.
 
-[#2043](https://github.com/steipete/CodexBar/pull/2043) showed three failure modes to avoid:
+[#2043](https://github.com/johanvillalbab/agentsbar/pull/2043) showed three failure modes to avoid:
 
 - copied ancestor rows across fork files still duplicated
 - distinct events collapsed under a shared lineage key
@@ -33,7 +33,7 @@ This document is the **canonical redesign**. The sanitized corpus is **design in
 
 **Closing #2037:** P1 may close the issue **only if** the sanitized corpus proves the P1 per-event accounting path **and** no affected golden family requires the containment fallback (`accountingQuality = contained`). `provenanceQuality = incomplete` alone does not block closure when a corpus-locked provisional-family rule produces `accountingQuality = primary` and matches the hand token/cost oracle over the available corpus. If any in-scope golden still needs containment (or event/lineage identity remains unproven), **P2 is required** before closing; P1 can still ship as a non-closing step with #2037 left open.
 
-**Relationship to [#2066](https://github.com/steipete/CodexBar/pull/2066):** file-local watermark + min-cap is a **conservative fallback only** when lineage identity is genuinely ambiguous — never the primary method, never sufficient alone to close #2037.
+**Relationship to [#2066](https://github.com/johanvillalbab/agentsbar/pull/2066):** file-local watermark + min-cap is a **conservative fallback only** when lineage identity is genuinely ambiguous — never the primary method, never sufficient alone to close #2037.
 
 ## 1. Problem (two layers)
 
@@ -433,7 +433,7 @@ The UI may collapse reasons into simpler copy, but cache/CLI/test output must pr
 2. **Cache** persists both fields and mandatory quality reasons with the family’s accepted events / cost nanos.
 3. **`CostUsageDailyReport`** (and project breakdowns if present) expose rolled-up fields, e.g. `provenanceQuality` + `accountingQuality` (or derived `isEstimate` = either non-ideal).
 4. **UI / menu:** distinct affordances when possible — e.g. “Incomplete fork history” vs “Estimated (conservative accounting)” — not a single vague “Estimated” that conflates the two.
-5. **CLI** (`codexbar cost` JSON): include both fields and quality reasons so agents/scripts do not treat estimates as exact.
+5. **CLI** (`agentsbar cost` JSON): include both fields and quality reasons so agents/scripts do not treat estimates as exact.
 
 Exact UX copy TBD; the **data path for both dimensions** is required in P1 so quality is not documentation-only.
 
@@ -466,7 +466,7 @@ Used only for the pre-fork exact-copy path or as a secondary assist — not glob
 | **P2** | Per-lineage cumulative baselines; containment strictly fallback → clear remaining `contained` goldens | Required to close when P1 still needs containment on in-scope goldens |
 | **P3** | Pi parity if logs match | Separate if needed |
 
-[#2066](https://github.com/steipete/CodexBar/pull/2066) may merge earlier only as an **explicit non-closing** interim guard with owner approval and #2037 left open.
+[#2066](https://github.com/johanvillalbab/agentsbar/pull/2066) may merge earlier only as an **explicit non-closing** interim guard with owner approval and #2037 left open.
 
 ## 9. Test plan (after corpus locks keys)
 
@@ -559,7 +559,7 @@ A sanitized Ultra / multi-fork corpus must answer:
 
 1. First milestone corpus: Codex JSONL, Pi, or both?
 2. Acceptable dollar tolerance vs hand oracle?
-3. Interim non-closing merge of [#2066](https://github.com/steipete/CodexBar/pull/2066) while P0–P1 proceed?
+3. Interim non-closing merge of [#2066](https://github.com/johanvillalbab/agentsbar/pull/2066) while P0–P1 proceed?
 4. Preferred UI strings for `provenanceQuality = incomplete` vs `accountingQuality = contained` (including when both apply)?
 5. Confirm the close gate: an oracle-matching `incomplete + primary` provisional family is acceptable, but any affected golden with `accountingQuality = contained` keeps #2037 open for P2?
 

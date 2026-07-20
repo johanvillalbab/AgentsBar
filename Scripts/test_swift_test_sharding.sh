@@ -3,7 +3,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-TEMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/codexbar-test-sharding.XXXXXX")"
+TEMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/agentsbar-test-sharding.XXXXXX")"
 trap 'rm -rf "${TEMP_DIR}"' EXIT
 
 IFS= read -r -d '' FAKE_SWIFT_SCRIPT <<'EOF' || true
@@ -18,17 +18,17 @@ if [[ "$*" == "test list" ]]; then
     exit 42
   fi
   printf '%s\n' \
-    "CodexBarTests.Alpha/test_one()" \
-    "CodexBarTests.Alpha/test_two(argument:)" \
-    "CodexBarTests.Beta/test_two" \
-    "CodexBarTests.Gamma/test_three" \
-    "CodexBarTests.Delta/test_four" \
-    "CodexBarTests.Epsilon/test_five" \
-    "CodexBarTests.Zeta/test_six" \
-    "CodexBarTests.Eta/test_seven" \
-    "CodexBarTests.Theta/test_eight" \
-    'CodexBarTests.`top level works`()' \
-    'CodexBarTests.`top/level slash works`()'
+    "AgentsBarTests.Alpha/test_one()" \
+    "AgentsBarTests.Alpha/test_two(argument:)" \
+    "AgentsBarTests.Beta/test_two" \
+    "AgentsBarTests.Gamma/test_three" \
+    "AgentsBarTests.Delta/test_four" \
+    "AgentsBarTests.Epsilon/test_five" \
+    "AgentsBarTests.Zeta/test_six" \
+    "AgentsBarTests.Eta/test_seven" \
+    "AgentsBarTests.Theta/test_eight" \
+    'AgentsBarTests.`top level works`()' \
+    'AgentsBarTests.`top/level slash works`()'
   exit 0
 fi
 
@@ -124,9 +124,9 @@ if not re.search(r"(?m)^\s+shard-index:\s+\[0,\s*1\]\s*$", job):
     raise SystemExit("swift-test-macos must run exactly two shard indexes: [0, 1]")
 if not re.search(r"(?m)^\s+shard-count:\s+\[2\]\s*$", job):
     raise SystemExit("swift-test-macos shard-count must be [2]")
-if "CODEXBAR_TEST_SHARD_INDEX=${{ matrix.shard-index }}" not in job:
+if "AGENTSBAR_TEST_SHARD_INDEX=${{ matrix.shard-index }}" not in job:
     raise SystemExit("swift-test-macos must pass matrix.shard-index to Scripts/test.sh")
-if "CODEXBAR_TEST_SHARD_COUNT=${{ matrix.shard-count }}" not in job:
+if "AGENTSBAR_TEST_SHARD_COUNT=${{ matrix.shard-count }}" not in job:
     raise SystemExit("swift-test-macos must pass matrix.shard-count to Scripts/test.sh")
 PY
 
@@ -143,18 +143,18 @@ grep -Fq '| First-pass failed groups | `1` |' "${GITHUB_STEP_SUMMARY}"
 grep -Fq '| Full-group retries | `1` |' "${GITHUB_STEP_SUMMARY}"
 grep -Fq '| Recovered groups | `1` |' "${GITHUB_STEP_SUMMARY}"
 [[ "$(grep -c '^test --skip-build --no-parallel' "${FAKE_SWIFT_LOG}")" -eq 4 ]]
-grep -Fq "CodexBarTests\\.Alpha" "${FAKE_SWIFT_LOG}"
-grep -Fq "CodexBarTests\\.Beta" "${FAKE_SWIFT_LOG}"
-grep -Fq "CodexBarTests\\..*top\\ level\\ works" "${FAKE_SWIFT_LOG}"
-grep -Fq "CodexBarTests\\..*top/level\\ slash\\ works" "${FAKE_SWIFT_LOG}"
+grep -Fq "AgentsBarTests\\.Alpha" "${FAKE_SWIFT_LOG}"
+grep -Fq "AgentsBarTests\\.Beta" "${FAKE_SWIFT_LOG}"
+grep -Fq "AgentsBarTests\\..*top\\ level\\ works" "${FAKE_SWIFT_LOG}"
+grep -Fq "AgentsBarTests\\..*top/level\\ slash\\ works" "${FAKE_SWIFT_LOG}"
 [[ "$(wc -l < "${FAKE_SWIFT_LOG}")" -eq 5 ]]
 
 reset_case strict
 export FAKE_SWIFT_MODE=group_fail_once
 set +e
-CODEXBAR_TEST_GROUP_SIZE=4 \
-  CODEXBAR_TEST_SUITE_TIMEOUT=10 \
-  CODEXBAR_TEST_RETRY_NON_TIMEOUT_FAILURES=0 \
+AGENTSBAR_TEST_GROUP_SIZE=4 \
+  AGENTSBAR_TEST_SUITE_TIMEOUT=10 \
+  AGENTSBAR_TEST_RETRY_NON_TIMEOUT_FAILURES=0 \
   "${ROOT_DIR}/Scripts/test.sh" \
     --limit-groups 1 \
     --swift-command /bin/bash \

@@ -8,28 +8,28 @@ read_when:
 # MiMo reserve reporting
 
 **Status:** accepted fail-closed evidence contract; not implemented
-**Issue:** [#1205](https://github.com/steipete/CodexBar/issues/1205)
+**Issue:** [#1205](https://github.com/johanvillalbab/agentsbar/issues/1205)
 **Date:** 2026-07-01
 
 ## Problem
 
-CodexBar shows MiMo token usage and the plan's current period end, but does not show whether consumption is in reserve or
+AgentsBar shows MiMo token usage and the plan's current period end, but does not show whether consumption is in reserve or
 deficit. Shared pace math requires both the used percentage and a trustworthy window duration. MiMo's observed plan
 response supplies the former and an end timestamp, but not the period start, duration, or billing cadence.
 
 ## Verified constraints
 
 - MiMo sells monthly and annual token plans. Plan validity and token-credit reset cadence are not interchangeable.
-- The redacted live response documented in [#1205](https://github.com/steipete/CodexBar/issues/1205) includes plan code,
+- The redacted live response documented in [#1205](https://github.com/johanvillalbab/agentsbar/issues/1205) includes plan code,
   plan name, current period end, expiry, and auto-renew fields. It does not include a start timestamp, duration, or
   monthly/annual cadence discriminator.
 - The usage response provides token used, limit, and percentage. Current main therefore maps a primary `RateWindow` with
   `resetsAt` and `windowMinutes == nil`.
 - Shared pace calculations intentionally return no reserve/deficit result when window duration is unknown.
-- Closed PR [#1310](https://github.com/steipete/CodexBar/pull/1310) inferred 30 or 31 days from the period end. That
+- Closed PR [#1310](https://github.com/johanvillalbab/agentsbar/pull/1310) inferred 30 or 31 days from the period end. That
   misclassifies annual plans during their final month and treats calendar proximity as a data contract.
 - Shared pace presentation owns reserve/deficit calculations. MiMo must not bypass it with provider-specific math.
-- PR [#1565](https://github.com/steipete/CodexBar/pull/1565) concerns MiMo cookie import only; it does not supply
+- PR [#1565](https://github.com/johanvillalbab/agentsbar/pull/1565) concerns MiMo cookie import only; it does not supply
   missing cadence data.
 
 ## Options
@@ -94,7 +94,7 @@ confidence and expiry rules.
 
 ## Decision
 
-CodexBar accepts the fail-closed contract above. This decision does not authorize runtime inference or change current MiMo
+AgentsBar accepts the fail-closed contract above. This decision does not authorize runtime inference or change current MiMo
 behavior: `windowMinutes` remains nil and reserve/deficit text remains absent until authoritative evidence satisfies the
-contract. Issue [#1205](https://github.com/steipete/CodexBar/issues/1205) stays open for that evidence and a separately
+contract. Issue [#1205](https://github.com/johanvillalbab/agentsbar/issues/1205) stays open for that evidence and a separately
 reviewed implementation. The next useful input is an annual-plan payload plus an authoritative token-credit reset source.

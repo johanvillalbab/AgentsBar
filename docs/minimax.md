@@ -14,7 +14,7 @@ falls back across the provider's supported web requests when needed.
 ## Data sources
 
 1) **Coding Plan API token**
-   - Set in Preferences → Providers → MiniMax (stored in `~/.codexbar/config.json`), `MINIMAX_CODING_API_KEY`,
+   - Set in Preferences → Providers → MiniMax (stored in `~/.config/agentsbar/config.json`), `MINIMAX_CODING_API_KEY`,
      or `MINIMAX_API_KEY`.
    - When both environment variables are present, `MINIMAX_CODING_API_KEY` wins so a standard `sk-api-*` key does
      not mask a coding-plan `sk-cp-*` key.
@@ -22,14 +22,14 @@ falls back across the provider's supported web requests when needed.
      returns 404.
 
 2) **Cached/imported browser session** (automatic web path)
-   - Uses CodexBar's standard cookie cache and browser import flow.
+   - Uses AgentsBar's standard cookie cache and browser import flow.
 
 3) **Browser cookie import** (automatic)
    - Uses provider metadata for browser order and MiniMax domain filters.
    - Chromium browser storage can supplement imported cookies with access-token context when available.
 
 4) **Manual session cookie header** (optional web-path override)
-   - Stored in `~/.codexbar/config.json` via Preferences → Providers → MiniMax (Cookie source → Manual).
+   - Stored in `~/.config/agentsbar/config.json` via Preferences → Providers → MiniMax (Cookie source → Manual).
    - Accepts a raw `Cookie:` header or a full "Copy as cURL" string.
    - Low-level no-settings runtime can read `MINIMAX_COOKIE` or `MINIMAX_COOKIE_HEADER`.
 
@@ -55,13 +55,13 @@ falls back across the provider's supported web requests when needed.
   - Top model and top method breakdowns.
   - Summary rows for recent billing-history totals.
 
-If the billing-history endpoint is unavailable but normal Coding Plan quota data is present, CodexBar still shows the
+If the billing-history endpoint is unavailable but normal Coding Plan quota data is present, AgentsBar still shows the
 quota card and omits the chart instead of treating the whole provider as failed.
 
 ## Key files
-- `Sources/CodexBarCore/Providers/MiniMax/MiniMaxUsageFetcher.swift`
-- `Sources/CodexBarCore/Providers/MiniMax/MiniMaxProviderDescriptor.swift`
-- `Sources/CodexBar/Providers/MiniMax/MiniMaxProviderImplementation.swift`
+- `Sources/AgentsBarCore/Providers/MiniMax/MiniMaxUsageFetcher.swift`
+- `Sources/AgentsBarCore/Providers/MiniMax/MiniMaxProviderDescriptor.swift`
+- `Sources/AgentsBar/Providers/MiniMax/MiniMaxProviderImplementation.swift`
 
 ## CLI diagnose command
 
@@ -70,7 +70,7 @@ for issue reporting and verification. MiniMax adds a provider-specific `details`
 
 ### Usage
 ```
-codexbar diagnose --provider minimax --format json --pretty
+agentsbar diagnose --provider minimax --format json --pretty
 ```
 
 ### Output

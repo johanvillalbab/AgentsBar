@@ -8,15 +8,15 @@ read_when:
 # Architecture overview
 
 ## Modules
-- `Sources/CodexBarCore`: fetch + parse (Codex RPC, PTY runner, Claude probes, OpenAI web scraping, status polling).
-- `Sources/CodexBar`: state + UI (UsageStore, SettingsStore, StatusItemController, menus, icon rendering).
-- `Sources/CodexBarWidget`: WidgetKit extension wired to the shared snapshot.
-- `Sources/CodexBarCLI`: bundled CLI for `codexbar` usage/status output.
-- `Sources/CodexBarClaudeWatchdog`: helper process for stable Claude CLI PTY sessions.
-- `Sources/CodexBarClaudeWebProbe`: CLI helper to diagnose Claude web fetches.
+- `Sources/AgentsBarCore`: fetch + parse (Codex RPC, PTY runner, Claude probes, OpenAI web scraping, status polling).
+- `Sources/AgentsBar`: state + UI (UsageStore, SettingsStore, StatusItemController, menus, icon rendering).
+- `Sources/AgentsBarWidget`: WidgetKit extension wired to the shared snapshot.
+- `Sources/AgentsBarCLI`: bundled CLI for `agentsbar` usage/status output.
+- `Sources/AgentsBarClaudeWatchdog`: helper process for stable Claude CLI PTY sessions.
+- `Sources/AgentsBarClaudeWebProbe`: CLI helper to diagnose Claude web fetches.
 
 ## Entry points
-- `CodexBarApp`: SwiftUI keepalive + Settings scene.
+- `AgentsBarApp`: SwiftUI keepalive + Settings scene.
 - `AppDelegate`: wires status controller, Sparkle updater, notifications.
 
 ## Data flow

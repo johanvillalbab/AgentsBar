@@ -10,13 +10,13 @@ read_when:
 z.ai is API-token based. No browser cookies.
 
 ## Token sources (fallback order)
-1) Config token (`~/.config/codexbar/config.json` or legacy `~/.codexbar/config.json` → `providers[].apiKey`).
+1) Config token (`~/.config/agentsbar/config.json` or legacy `~/.codexbar/config.json` / `~/.config/codexbar/config.json` → `providers[].apiKey`).
 2) Environment variable `Z_AI_API_KEY`.
 
 ### Config location
-- New installs: `~/.config/codexbar/config.json`
-- Legacy installs: `~/.codexbar/config.json`
-- Override for scripts/tests: `CODEXBAR_CONFIG=/path/to/config.json`
+- New installs: `~/.config/agentsbar/config.json`
+- Legacy installs: `~/.codexbar/config.json` or `~/.config/codexbar/config.json`
+- Override for scripts/tests: `AGENTSBAR_CONFIG=/path/to/config.json`
 
 ## Setup
 
@@ -27,13 +27,13 @@ Set **API region** to **Global (api.z.ai)** or **BigModel CN (open.bigmodel.cn)*
 - CLI personal:
 
   ```bash
-  printf '%s' "$Z_AI_API_KEY" | codexbar config set-api-key --provider zai --stdin
+  printf '%s' "$Z_AI_API_KEY" | agentsbar config set-api-key --provider zai --stdin
   ```
 
 - CLI team:
 
   ```bash
-  printf '%s' "$Z_AI_API_KEY" | codexbar config set-api-key --provider zai --stdin \
+  printf '%s' "$Z_AI_API_KEY" | agentsbar config set-api-key --provider zai --stdin \
     --label Team \
     --usage-scope team \
     --organization-id org_... \
@@ -43,8 +43,8 @@ Set **API region** to **Global (api.z.ai)** or **BigModel CN (open.bigmodel.cn)*
 - Check:
 
   ```bash
-  codexbar config validate
-  codexbar usage --provider zai --account Team
+  agentsbar config validate
+  agentsbar usage --provider zai --account Team
   ```
 
 Personal config can use `providers[].apiKey`. Team config uses `tokenAccounts`:
@@ -76,7 +76,7 @@ Personal config can use `providers[].apiKey`. Team config uses `tokenAccounts`:
 Keep `organizationId` and `workspaceID` single-line. Do not paste display names, URLs, or multiple IDs.
 
 ## Finding the BigModel team IDs
-For BigModel China team usage, CodexBar needs the `Bigmodel-Organization` and `Bigmodel-Project` request headers:
+For BigModel China team usage, AgentsBar needs the `Bigmodel-Organization` and `Bigmodel-Project` request headers:
 
 1. Open the BigModel API-key page and create/copy the API key:
    - `https://bigmodel.cn/usercenter/proj-mgmt/apikeys`
@@ -97,7 +97,7 @@ Copy each value once, on one line. Multi-line or duplicated IDs can make the API
 - BigModel (China mainland) host: `https://open.bigmodel.cn`
 - Override host via Providers → z.ai → *API region* or `Z_AI_API_HOST=open.bigmodel.cn`.
 - Override the full quota URL (e.g. coding plan endpoint) via `Z_AI_QUOTA_URL=https://open.bigmodel.cn/api/coding/paas/v4`.
-- Endpoint overrides must be explicit HTTPS URLs or bare hosts/paths that CodexBar normalizes to HTTPS. Explicit
+- Endpoint overrides must be explicit HTTPS URLs or bare hosts/paths that AgentsBar normalizes to HTTPS. Explicit
   `http://` overrides fail closed before the bearer token is attached to a request. If both z.ai overrides are set,
   `Z_AI_QUOTA_URL` has priority for quota requests; a stale lower-priority `Z_AI_API_HOST` is ignored for that quota
   path, but direct model-usage requests still validate `Z_AI_API_HOST` before sending bearer auth.
@@ -114,14 +114,14 @@ Copy each value once, on one line. Multi-line or duplicated IDs can make the API
 - Team quota scope appends `type=2`; team hourly model usage appends `type=3`. Both send the BigModel selectors:
   - `Bigmodel-Organization: <org id>`
   - `Bigmodel-Project: <project id>`
-- Live API checks return success with empty limits when one of the selectors is missing, so CodexBar treats both
+- Live API checks return success with empty limits when one of the selectors is missing, so AgentsBar treats both
   Organization ID and Project ID as required for team usage.
 
 ## Usage dashboard
 - Global: `https://z.ai/manage-apikey/coding-plan/personal/my-plan`
 - BigModel China: `https://bigmodel.cn/coding-plan/personal/usage`
 - BigModel China team: `https://bigmodel.cn/coding-plan/team/usage-stats`
-- CodexBar's Usage Dashboard action follows the configured API region.
+- AgentsBar's Usage Dashboard action follows the configured API region.
 
 ## Parsing + mapping
 - Response fields:
@@ -138,6 +138,6 @@ Copy each value once, on one line. Multi-line or duplicated IDs can make the API
   - `usageDetails[]` per model (MCP usage list).
 
 ## Key files
-- `Sources/CodexBarCore/Providers/Zai/ZaiUsageStats.swift`
-- `Sources/CodexBarCore/Providers/Zai/ZaiSettingsReader.swift`
-- `Sources/CodexBar/ZaiTokenStore.swift` (legacy migration helper)
+- `Sources/AgentsBarCore/Providers/Zai/ZaiUsageStats.swift`
+- `Sources/AgentsBarCore/Providers/Zai/ZaiSettingsReader.swift`
+- `Sources/AgentsBar/ZaiTokenStore.swift` (legacy migration helper)

@@ -279,15 +279,15 @@ jobs:
             -o "$sqlite_out/build/sqlite3.o"
           llvm-ar crs "$sqlite_out/lib/libsqlite3.a" "$sqlite_out/build/sqlite3.o"
 
-          echo "CODEXBAR_SQLITE3_LIB_DIR=$sqlite_out/lib" >> "$GITHUB_ENV"
+          echo "AGENTSBAR_SQLITE3_LIB_DIR=$sqlite_out/lib" >> "$GITHUB_ENV"
 
-      - name: Build CodexBarCLI (release)
+      - name: Build AgentsBarCLI (release)
         id: build
         shell: bash
         run: |
           set -euo pipefail
 
-          BUILD_ARGS=(swift build -c release --product CodexBarCLI)
+          BUILD_ARGS=(swift build -c release --product AgentsBarCLI)
           if [[ -n "${{ matrix.swift-sdk }}" ]]; then
             BUILD_ARGS+=(--swift-sdk "${{ matrix.swift-sdk }}" --triple "${{ matrix.swift-sdk-triple }}")
           elif [[ -n "${{ matrix.build-arch }}" ]]; then
@@ -298,7 +298,7 @@ jobs:
           fi
           "${BUILD_ARGS[@]}"
 
-          SHOW_BIN_ARGS=(swift build -c release --product CodexBarCLI --show-bin-path)
+          SHOW_BIN_ARGS=(swift build -c release --product AgentsBarCLI --show-bin-path)
           if [[ -n "${{ matrix.swift-sdk }}" ]]; then
             SHOW_BIN_ARGS+=(--swift-sdk "${{ matrix.swift-sdk }}" --triple "${{ matrix.swift-sdk-triple }}")
           elif [[ -n "${{ matrix.build-arch }}" ]]; then
@@ -310,14 +310,14 @@ jobs:
 
           echo "bin_dir=$("${SHOW_BIN_ARGS[@]}")" >> "$GITHUB_OUTPUT"
 
-      - name: Smoke test CodexBarCLI
+      - name: Smoke test AgentsBarCLI
         timeout-minutes: 5
         shell: bash
         run: |
           set -euo pipefail
 
           BIN_DIR="${{ steps.build.outputs.bin_dir }}"
-          BIN="$BIN_DIR/CodexBarCLI"
+          BIN="$BIN_DIR/AgentsBarCLI"
           run_with_timeout() {
             local output="$1"
             shift
@@ -350,20 +350,20 @@ jobs:
           file "$BIN"
           if [[ "${{ matrix.platform }}" == "macos" ]]; then
             lipo -archs "$BIN" | tr ' ' '\n' | grep -Fx "${{ matrix.asset-arch }}"
-            run_with_timeout "$RUNNER_TEMP/codexbar-cli-smoke-${{ matrix.name }}.txt" "$BIN" config validate --format json
+            run_with_timeout "$RUNNER_TEMP/agentsbar-cli-smoke-${{ matrix.name }}.txt" "$BIN" config validate --format json
           elif [[ -n "${{ matrix.swift-sdk }}" ]]; then
-            run_with_timeout "$RUNNER_TEMP/codexbar-cli-help-${{ matrix.name }}.txt" "$BIN" --help
-            run_with_timeout "$RUNNER_TEMP/codexbar-cli-config-${{ matrix.name }}.json" "$BIN" config validate --format json
+            run_with_timeout "$RUNNER_TEMP/agentsbar-cli-help-${{ matrix.name }}.txt" "$BIN" --help
+            run_with_timeout "$RUNNER_TEMP/agentsbar-cli-config-${{ matrix.name }}.json" "$BIN" config validate --format json
             file "$BIN" | grep -q "${{ matrix.file-arch-pattern }}"
             file "$BIN" | grep -q "statically linked"
           else
-            run_with_timeout "$RUNNER_TEMP/codexbar-cli-help-${{ matrix.name }}.txt" "$BIN" --help
+            run_with_timeout "$RUNNER_TEMP/agentsbar-cli-help-${{ matrix.name }}.txt" "$BIN" --help
             file "$BIN" | grep -q "${{ matrix.file-arch-pattern }}"
           fi
           printf '%s\n' "${RELEASE_TAG#v}" > "$BIN_DIR/VERSION"
-          VERSION_OUTPUT="$RUNNER_TEMP/codexbar-cli-version-${{ matrix.name }}.txt"
+          VERSION_OUTPUT="$RUNNER_TEMP/agentsbar-cli-version-${{ matrix.name }}.txt"
           run_with_timeout "$VERSION_OUTPUT" "$BIN" --version
-          grep -Fx "CodexBar ${RELEASE_TAG#v}" "$VERSION_OUTPUT"
+          grep -Fx "AgentsBar ${RELEASE_TAG#v}" "$VERSION_OUTPUT"
           rm "$BIN_DIR/VERSION"
 
       - name: Package
@@ -381,12 +381,12 @@ jobs:
 
           BIN_DIR="${{ steps.build.outputs.bin_dir }}"
           OUT_DIR="$(mktemp -d)"
-          install -m 0755 "$BIN_DIR/CodexBarCLI" "$OUT_DIR/CodexBarCLI"
-          ln -s "CodexBarCLI" "$OUT_DIR/codexbar"
+          install -m 0755 "$BIN_DIR/AgentsBarCLI" "$OUT_DIR/AgentsBarCLI"
+          ln -s "AgentsBarCLI" "$OUT_DIR/agentsbar"
           printf '%s\n' "${SAFE_REF_NAME#v}" > "$OUT_DIR/VERSION"
 
-          ASSET="CodexBarCLI-${SAFE_REF_NAME}-${{ matrix.asset-platform }}-${{ matrix.asset-arch }}.tar.gz"
-          (cd "$OUT_DIR" && tar czf "$ASSET" CodexBarCLI codexbar VERSION)
+          ASSET="AgentsBarCLI-${SAFE_REF_NAME}-${{ matrix.asset-platform }}-${{ matrix.asset-arch }}.tar.gz"
+          (cd "$OUT_DIR" && tar czf "$ASSET" AgentsBarCLI agentsbar VERSION)
           if command -v sha256sum >/dev/null 2>&1; then
             sha256sum "$OUT_DIR/$ASSET" > "$OUT_DIR/$ASSET.sha256"
           else
@@ -412,7 +412,7 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: codexbar-cli-${{ matrix.name }}
+          name: agentsbar-cli-${{ matrix.name }}
           path: |
             ${{ steps.pkg.outputs.out_dir }}/${{ steps.pkg.outputs.asset }}
             ${{ steps.pkg.outputs.out_dir }}/${{ steps.pkg.outputs.asset }}.sha256
@@ -439,7 +439,7 @@ jobs:
             exit 1
           fi
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
-          echo "request_id=codexbar-${tag}-${GITHUB_RUN_ID}" >> "$GITHUB_OUTPUT"
+          echo "request_id=agentsbar-${tag}-${GITHUB_RUN_ID}" >> "$GITHUB_OUTPUT"
 
       - name: Dispatch tap update
         env:
@@ -453,13 +453,13 @@ jobs:
           for attempt in {1..6}; do
             if gh workflow run update-formula.yml \
               --repo steipete/homebrew-tap \
-              -f formula=codexbar \
+              -f formula=agentsbar \
               -f tag="$RELEASE_TAG" \
-              -f repository=steipete/CodexBar \
-              -f artifact_template='CodexBarCLI-{tag}-{target}.tar.gz' \
+              -f repository=johanvillalbab/agentsbar \
+              -f artifact_template='AgentsBarCLI-{tag}-{target}.tar.gz' \
               -f target_aliases='darwin_arm64=macos-arm64,darwin_amd64=macos-x86_64,linux_arm64=linux-aarch64,linux_amd64=linux-x86_64' \
-              -f cask=codexbar \
-              -f cask_artifact='CodexBar-macos-universal-{version}.zip' \
+              -f cask=agentsbar \
+              -f cask_artifact='AgentsBar-macos-universal-{version}.zip' \
               -f request_id="$REQUEST_ID"; then
               exit 0
             fi
@@ -483,14 +483,14 @@ jobs:
                 --repo steipete/homebrew-tap \
                 --workflow update-formula.yml \
                 --json databaseId,displayTitle \
-                --jq '.[] | select(.displayTitle | contains(env.REQUEST_ID)) | .databaseId' 2>/tmp/codexbar-tap-run-list.err \
+                --jq '.[] | select(.displayTitle | contains(env.REQUEST_ID)) | .databaseId' 2>/tmp/agentsbar-tap-run-list.err \
                 | head -n1 || true
             )"
             if [[ -n "$run_id" ]]; then
               gh run watch "$run_id" --repo steipete/homebrew-tap --exit-status
               exit 0
             fi
-            cat /tmp/codexbar-tap-run-list.err >&2 || true
+            cat /tmp/agentsbar-tap-run-list.err >&2 || true
             sleep 5
           done
           echo "Timed out waiting for tap workflow to appear." >&2

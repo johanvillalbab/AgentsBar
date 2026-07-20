@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 PACKAGE_SCRIPT="$ROOT/Scripts/package_app.sh"
 RELEASE_SCRIPT="$ROOT/Scripts/sign-and-notarize.sh"
-FUNCTIONS_FILE=$(mktemp "${TMPDIR:-/tmp}/codexbar-package-signing-functions.XXXXXX")
+FUNCTIONS_FILE=$(mktemp "${TMPDIR:-/tmp}/agentsbar-package-signing-functions.XXXXXX")
 trap 'rm -f "$FUNCTIONS_FILE"' EXIT
 
 python3 - "$PACKAGE_SCRIPT" "$FUNCTIONS_FILE" <<'PY'
@@ -26,26 +26,26 @@ PY
 
 source "$FUNCTIONS_FILE"
 
-unset CODEXBAR_SIGNING
+unset AGENTSBAR_SIGNING
 SIGNING_MODE=
 resolve_package_signing_mode
 [[ "$SIGNING_MODE" == "adhoc" ]]
 
-CODEXBAR_SIGNING=identity
+AGENTSBAR_SIGNING=identity
 resolve_package_signing_mode
 [[ "$SIGNING_MODE" == "identity" ]]
 
-CODEXBAR_SIGNING=invalid
+AGENTSBAR_SIGNING=invalid
 if resolve_package_signing_mode 2>/dev/null; then
   echo "Invalid package signing mode unexpectedly succeeded" >&2
   exit 1
 fi
 
-grep -Fq 'CODEXBAR_SIGNING=identity ./Scripts/package_app.sh release' "$RELEASE_SCRIPT"
+grep -Fq 'AGENTSBAR_SIGNING=identity ./Scripts/package_app.sh release' "$RELEASE_SCRIPT"
 
-TEMP_DIR=$(mktemp -d "${TMPDIR:-/tmp}/codexbar-package-signing.XXXXXX")
+TEMP_DIR=$(mktemp -d "${TMPDIR:-/tmp}/agentsbar-package-signing.XXXXXX")
 trap 'rm -f "$FUNCTIONS_FILE"; rm -rf "$TEMP_DIR"' EXIT
-APP="$TEMP_DIR/CodexBar.app"
+APP="$TEMP_DIR/AgentsBar.app"
 mkdir -p "$APP/Contents/Frameworks/Sparkle.framework"
 
 xattr() {

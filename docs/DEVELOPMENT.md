@@ -6,7 +6,7 @@ read_when:
   - Troubleshooting Keychain prompts in dev
 ---
 
-# CodexBar Development Guide
+# AgentsBar Development Guide
 
 ## Quick Start
 
@@ -28,11 +28,11 @@ read_when:
 
 ### Development Workflow
 
-1. **Make code changes** in `Sources/CodexBar/`
+1. **Make code changes** in `Sources/AgentsBar/`
 2. **Run** `./Scripts/compile_and_run.sh --test` to test, rebuild, and launch
-3. **Check logs** in Console.app (filter by "codexbar")
+3. **Check logs** in Console.app (filter by "agentsbar")
 4. **Optional file log**: enable Debug → Logging → "Enable file logging" to write
-   `~/Library/Logs/CodexBar/CodexBar.log` (verbosity defaults to "Verbose")
+   `~/Library/Logs/AgentsBar/AgentsBar.log` (verbosity defaults to "Verbose")
 
 ## Keychain Prompts (Development)
 
@@ -40,7 +40,7 @@ read_when:
 You'll see **one keychain prompt per stored credential** on the first launch. This is a **one-time migration** that converts existing keychain items to use `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`.
 
 ### Subsequent Rebuilds
-The migration flag is stored in UserDefaults, so migrated CodexBar-owned items should not prompt again. Ad-hoc
+The migration flag is stored in UserDefaults, so migrated AgentsBar-owned items should not prompt again. Ad-hoc
 signing can still prompt for other keychain surfaces; use `./Scripts/compile_and_run.sh --clear-adhoc-keychain`
 when you intentionally want to reset ad-hoc keychain state.
 
@@ -52,13 +52,13 @@ when you intentionally want to reset ad-hoc keychain state.
 
 ### Reset Migration (Testing)
 ```bash
-defaults delete com.steipete.codexbar KeychainMigrationV1Completed
+defaults delete com.steipete.agentsbar KeychainMigrationV1Completed
 ```
 
 ## Augment Cookie Refresh
 
 ### How It Works
-CodexBar checks Augment through the provider fetch pipeline. Auto mode tries the Augment CLI first, then the
+AgentsBar checks Augment through the provider fetch pipeline. Auto mode tries the Augment CLI first, then the
 browser-cookie web path. The web path reuses cached cookies when possible and imports from supported browsers when
 the cache is missing or rejected.
 
@@ -82,24 +82,24 @@ If automatic import fails:
 Key source, test, and packaging paths (not exhaustive):
 
 ```
-CodexBar/
-├── Sources/CodexBar/          # Main app (SwiftUI + AppKit)
-│   ├── CodexbarApp.swift      # App entry point
+AgentsBar/
+├── Sources/AgentsBar/          # Main app (SwiftUI + AppKit)
+│   ├── AgentsbarApp.swift      # App entry point
 │   ├── StatusItemController*.swift  # Menu bar icon, menu rendering, and actions
 │   ├── UsageStore*.swift      # Usage refresh, caching, widgets, and history
 │   ├── SettingsStore*.swift   # User preferences and config persistence
 │   ├── Providers/             # App-side provider settings/runtime glue
 │   └── Resources/             # Assets and localized strings
-├── Sources/CodexBarCore/      # Shared business logic used by app, CLI, and widgets
+├── Sources/AgentsBarCore/      # Shared business logic used by app, CLI, and widgets
 │   ├── Config/                # Config file model, reader, writer, and validation
 │   ├── Providers/             # Provider descriptors, fetchers, parsers, and status probes
 │   ├── OpenAIWeb/             # OpenAI dashboard integration helpers
 │   ├── WebKit/                # Web session helpers
 │   └── Vendored/              # Embedded support code
-├── Sources/CodexBarCLI/       # Bundled codexbar command-line tool
-├── Sources/CodexBarWidget/    # WidgetKit support
+├── Sources/AgentsBarCLI/       # Bundled agentsbar command-line tool
+├── Sources/AgentsBarWidget/    # WidgetKit support
 ├── WidgetExtension/           # Xcode wrapper for the packaged widget extension
-├── Tests/CodexBarTests/       # macOS app/core test suite (XCTest + Swift Testing)
+├── Tests/AgentsBarTests/       # macOS app/core test suite (XCTest + Swift Testing)
 ├── TestsLinux/                # Linux-specific CLI/core test coverage
 └── Scripts/                   # Build and packaging scripts
 ```
@@ -109,22 +109,22 @@ CodexBar/
 ### Add a New Provider
 See the canonical [provider authoring guide](provider.md#adding-a-new-provider-current-flow) for the complete flow.
 
-1. Add the provider identity to `Sources/CodexBarCore/Providers/Providers.swift`.
+1. Add the provider identity to `Sources/AgentsBarCore/Providers/Providers.swift`.
 2. Add the descriptor and the fetcher, parser, settings-reader, or status-probe pieces the provider needs under
-   `Sources/CodexBarCore/Providers/YourProvider/`.
-3. Register the descriptor from `Sources/CodexBarCore/Providers/ProviderDescriptor.swift`.
-4. Add an app-side `ProviderImplementation` under `Sources/CodexBar/Providers/YourProvider/`; implementations can use
+   `Sources/AgentsBarCore/Providers/YourProvider/`.
+3. Register the descriptor from `Sources/AgentsBarCore/Providers/ProviderDescriptor.swift`.
+4. Add an app-side `ProviderImplementation` under `Sources/AgentsBar/Providers/YourProvider/`; implementations can use
    protocol defaults when no custom UI or macOS integration is needed.
 5. Add the provider's exhaustive switch case to
-   `Sources/CodexBar/Providers/Shared/ProviderImplementationRegistry.swift`.
-6. Add icon assets under `Sources/CodexBar/Resources/`.
-7. Add focused tests under `Tests/CodexBarTests/` and, for CLI/core behavior that must run on Linux, `TestsLinux/`.
+   `Sources/AgentsBar/Providers/Shared/ProviderImplementationRegistry.swift`.
+6. Add icon assets under `Sources/AgentsBar/Resources/`.
+7. Add focused tests under `Tests/AgentsBarTests/` and, for CLI/core behavior that must run on Linux, `TestsLinux/`.
 
 ### Debug Cookie Issues
 1. Enable Debug → Logging → "Enable file logging" or raise verbosity in the app settings.
 2. Reproduce with `./Scripts/compile_and_run.sh`.
 3. Check logs in Console.app:
-   - Filter: `subsystem:com.steipete.codexbar category:augment`
+   - Filter: `subsystem:com.steipete.agentsbar category:augment`
    - Importer messages include the `[augment-cookie]` prefix
 
 ### Run Tests Only
@@ -143,13 +143,13 @@ swiftlint --strict
 ### Local Development Build
 ```bash
 ./Scripts/package_app.sh
-# Creates: CodexBar.app with ad-hoc signing by default
+# Creates: AgentsBar.app with ad-hoc signing by default
 ```
 
 ### Release Build (Notarized)
 ```bash
 ./Scripts/sign-and-notarize.sh
-# Creates: CodexBar-<version>.zip and CodexBar-<version>.dSYM.zip
+# Creates: AgentsBar-<version>.zip and AgentsBar-<version>.dSYM.zip
 ```
 
 See `docs/RELEASING.md` for full release process.
@@ -159,16 +159,16 @@ See `docs/RELEASING.md` for full release process.
 ### App Won't Launch
 ```bash
 # Check crash logs
-ls -lt ~/Library/Logs/DiagnosticReports/CodexBar* | head -5
+ls -lt ~/Library/Logs/DiagnosticReports/AgentsBar* | head -5
 
 # Check Console.app for errors
-# Filter: process:CodexBar
+# Filter: process:AgentsBar
 ```
 
 ### Keychain Prompts Keep Appearing
 ```bash
 # Verify migration completed
-defaults read com.steipete.codexbar KeychainMigrationV1Completed
+defaults read com.steipete.agentsbar KeychainMigrationV1Completed
 # Should output: 1
 
 # Check migration logs
@@ -184,17 +184,17 @@ log show --predicate 'category == "keychain-migration"' --last 5m
 ### Main-Thread Hangs
 
 Debug builds start the hang watchdog automatically. To diagnose a release build,
-enable it explicitly and restart CodexBar:
+enable it explicitly and restart AgentsBar:
 
 ```bash
-defaults write com.steipete.codexbar debugMainThreadHangWatchdog -bool true
+defaults write com.steipete.agentsbar debugMainThreadHangWatchdog -bool true
 ```
 
 Hangs are written to the app log. Hangs over two seconds also request a process
-sample under `~/Library/Logs/CodexBar/`. Disable the release opt-in with:
+sample under `~/Library/Logs/AgentsBar/`. Disable the release opt-in with:
 
 ```bash
-defaults delete com.steipete.codexbar debugMainThreadHangWatchdog
+defaults delete com.steipete.agentsbar debugMainThreadHangWatchdog
 ```
 
 ## Architecture Notes
@@ -208,7 +208,7 @@ defaults delete com.steipete.codexbar debugMainThreadHangWatchdog
 ### Cookie Management
 - Automatic browser import via SweetCookieKit
 - Keychain cache for some imported browser cookies and OAuth/device-flow credentials
-- `~/.codexbar/config.json` for provider settings, manual cookies, and stored API keys
+- `~/.config/agentsbar/config.json` for provider settings, manual cookies, and stored API keys
 - Manual override for debugging
 - Browser-cookie import when cached sessions need refresh
 

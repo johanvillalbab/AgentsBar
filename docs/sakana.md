@@ -9,7 +9,7 @@ read_when:
 
 # Sakana AI
 
-[Sakana AI](https://sakana.ai) is a research lab focusing on foundation models and nature-inspired AI. CodexBar reads
+[Sakana AI](https://sakana.ai) is a research lab focusing on foundation models and nature-inspired AI. AgentsBar reads
 the billing page to surface 5-hour and weekly quota windows for subscribers.
 
 ## Setup
@@ -18,8 +18,8 @@ the billing page to surface 5-hour and weekly quota windows for subscribers.
 2. Open your browser's developer tools, navigate to the **Network** tab, and reload the billing page
    (`console.sakana.ai/billing`).
 3. Copy the full `Cookie:` request header value from any billing-page request.
-4. In CodexBar, paste the header in **Settings → Providers → Sakana AI → Cookie header**.
-   The value is stored unencrypted in the [resolved config file](configuration.md#location). CodexBar sets that file's
+4. In AgentsBar, paste the header in **Settings → Providers → Sakana AI → Cookie header**.
+   The value is stored unencrypted in the [resolved config file](configuration.md#location). AgentsBar sets that file's
    permissions to `0600` whenever it writes the file on macOS or Linux.
 
 Alternatively, set the environment variable `SAKANA_COOKIE` to the raw cookie header value.
@@ -40,13 +40,13 @@ Alternatively, set the environment variable `SAKANA_COOKIE` to the raw cookie he
 - Reset dates are parsed as **UTC**, not the device's local time zone. The billing page always server-renders
   "Resets on <date>" in UTC — the browser only corrects it to the viewer's local time client-side, after JS
   hydration, which this HTML-only fetcher never runs. (Parsing with `TimeZone.current` instead shifted every reset
-  by the device's UTC offset; see [#1826](https://github.com/steipete/CodexBar/issues/1826).) The fetcher detects
+  by the device's UTC offset; see [#1826](https://github.com/johanvillalbab/agentsbar/issues/1826).) The fetcher detects
   `"MMMM d, yyyy 'at' h:mm a"` format strings.
 - Plan name and price label (e.g. `Standard $20/mo`) are joined and surfaced as the `loginMethod` identity field for
   plan display in the menu.
 - Token cost tracking (`supportsTokenCost: false`): not supported; cost summary is unavailable. Sakana has no
   organization-level usage/cost API to query historically, only the per-request `usage` object returned by chat
-  completions calls (which CodexBar never makes), so there is no local-log source to scan the way Claude/Codex are.
+  completions calls (which AgentsBar never makes), so there is no local-log source to scan the way Claude/Codex are.
 - Credits row (`supportsCredits: false`): not shown. The shared credits-card UI path (`MenuCardView+Costs.swift`)
   has no Sakana branch and would just render the static `creditsHint` string instead of the fetched balance, so
   `supportsCredits` stays off; the balance is surfaced explicitly instead (see below).
@@ -58,7 +58,7 @@ Sakana also sells prepaid credit for pay-as-you-go API usage (the model IDs `fug
 the subscription quota windows above. `console.sakana.ai/billing` renders this data server-side under its
 "Pay as you go" tab, but that tab's markup is only present in the HTML response when the request URL includes
 `?tab=payAsYouGo` — the default `/billing` response (used for the subscription quota fetch above) does not include
-it. CodexBar issues a **second, best-effort** GET to `https://console.sakana.ai/billing?tab=payAsYouGo` with the same
+it. AgentsBar issues a **second, best-effort** GET to `https://console.sakana.ai/billing?tab=payAsYouGo` with the same
 cookie header alongside the subscription request — skipped entirely (no request made) when
 `context.includeOptionalUsage` is `false`, i.e. Settings → Advanced → "Show optional credits and extra usage" is
 disabled.
@@ -68,7 +68,7 @@ disabled.
   currently selected on the console (defaults to the last 30 days). React renders this text with `<!-- -->`
   hydration-boundary comments splitting the label from the amount; the parser strips those before reading the value.
 - **Date range label**: the raw text of the "Usage date range" picker button (e.g. `Jun 02, 2026 - Jul 01, 2026`),
-  kept only as context — CodexBar does not currently interpret it as start/end dates.
+  kept only as context — AgentsBar does not currently interpret it as start/end dates.
 
 This second fetch never throws and never blocks the primary result: if it fails (network error, non-200, wrong
 origin, empty body, or the expected markup isn't found), the pay-as-you-go fields are simply absent from that
@@ -93,16 +93,16 @@ timeout or outlive the refresh that started it.
 ## CLI usage
 
 ```
-codexbar usage --provider sakana
-codexbar usage --provider sakana-ai   # alias
+agentsbar usage --provider sakana
+agentsbar usage --provider sakana-ai   # alias
 ```
 
 Set the cookie via the environment variable or Settings UI:
 
-- **Environment variable**: `SAKANA_COOKIE=<cookie-header-value> codexbar usage --provider sakana`
+- **Environment variable**: `SAKANA_COOKIE=<cookie-header-value> agentsbar usage --provider sakana`
 - **Settings UI**: Settings → Providers → Sakana AI → Cookie header
 
-There is no `codexbar config set` command for `cookieHeader`; use one of the paths above.
+There is no `agentsbar config set` command for `cookieHeader`; use one of the paths above.
 
 ## Errors
 
@@ -115,16 +115,16 @@ There is no `codexbar config set` command for `cookieHeader`; use one of the pat
 
 ## Related files
 
-- `Sources/CodexBarCore/Providers/Sakana/`
+- `Sources/AgentsBarCore/Providers/Sakana/`
   - `SakanaProviderDescriptor.swift` — provider metadata, fetch plan, CLI config
   - `SakanaSettingsReader.swift` — `SAKANA_COOKIE` env key, cookie normalizer
   - `SakanaUsageFetcher.swift` — billing-page HTML fetch and quota parser; also defines
     `SakanaPayAsYouGoSnapshot` and the pay-as-you-go tab fetch/parser
-- `Sources/CodexBar/Providers/Sakana/`
+- `Sources/AgentsBar/Providers/Sakana/`
   - `SakanaProviderImplementation.swift` — settings UI, availability check
   - `SakanaSettingsStore.swift` — `sakanaCookieHeader` settings binding
-- `Sources/CodexBar/MenuCardView+Costs.swift` — live menu-card balance and usage section
-- `Sources/CodexBar/MenuDescriptor.swift` — text-descriptor balance and usage rows
-- `Tests/CodexBarTests/SakanaUsageFetcherTests.swift` — parser regression tests
+- `Sources/AgentsBar/MenuCardView+Costs.swift` — live menu-card balance and usage section
+- `Sources/AgentsBar/MenuDescriptor.swift` — text-descriptor balance and usage rows
+- `Tests/AgentsBarTests/SakanaUsageFetcherTests.swift` — parser regression tests
 - Dashboard: `https://console.sakana.ai/billing` (subscription tab), `https://console.sakana.ai/billing?tab=payAsYouGo`
   (pay-as-you-go tab)

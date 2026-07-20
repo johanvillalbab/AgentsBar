@@ -8,13 +8,13 @@ read_when:
 
 # Adaptive refresh decision record
 
-- **Status:** Opt-in policy accepted in [#1861](https://github.com/steipete/CodexBar/pull/1861); agent-aware extension shipped as a separate explicit mode
+- **Status:** Opt-in policy accepted in [#1861](https://github.com/johanvillalbab/agentsbar/pull/1861); agent-aware extension shipped as a separate explicit mode
 - **Decision owner:** Maintainer
 - **Runtime impact:** Bounded fresh-install default of 2–30-minute provider-batch cadence; an explicitly allowed local activity scan runs every 30 seconds when unconstrained
 
 ## Decision
 
-CodexBar uses plain `Adaptive` for a missing refresh preference only when no prior-launch marker or existing config exists.
+AgentsBar uses plain `Adaptive` for a missing refresh preference only when no prior-launch marker or existing config exists.
 The resolved value is persisted immediately, so later launches preserve that choice. Existing installations without a
 stored cadence, and unrecognized stored values, resolve to the legacy 5-minute fallback. Every valid stored choice,
 including Manual and each fixed interval, remains unchanged. Both adaptive modes adjust the existing provider-batch
@@ -59,15 +59,15 @@ Relevant implementation seams:
 
 - `Sources/AdaptiveRefreshCore/AdaptiveRefreshPolicyCore.swift`: canonical package-internal policy table shared by the
   app adapter and offline replay tooling.
-- `Sources/CodexBar/SettingsStore.swift`: `RefreshFrequency` and fixed interval mapping.
-- `Sources/CodexBar/UsageStore.swift`: timer ownership and provider-batch refresh.
-- `Sources/CodexBar/AgentSessionsStore.swift`: 30-second local scan ownership and timestamp-only Adaptive projection.
-- `Sources/CodexBarCore/LocalAgentSessionScanner.swift`: existing local process/transcript correlation reused by
+- `Sources/AgentsBar/SettingsStore.swift`: `RefreshFrequency` and fixed interval mapping.
+- `Sources/AgentsBar/UsageStore.swift`: timer ownership and provider-batch refresh.
+- `Sources/AgentsBar/AgentSessionsStore.swift`: 30-second local scan ownership and timestamp-only Adaptive projection.
+- `Sources/AgentsBarCore/LocalAgentSessionScanner.swift`: existing local process/transcript correlation reused by
   Agent Sessions and Adaptive.
-- `Sources/CodexBar/UsageStore+Refresh.swift`: provider refresh coalescing and result application.
-- `Sources/CodexBar/StatusItemController+Menu.swift`: missing/error-only menu-open refresh.
-- `Sources/CodexBar/StatusItemController+MenuInteractionRefresh.swift`: deferred non-interactive refresh safety.
-- `Tests/CodexBarTests/StatusMenuInstantOpenTests.swift`: fresh, missing, in-flight, and close-during-refresh contracts.
+- `Sources/AgentsBar/UsageStore+Refresh.swift`: provider refresh coalescing and result application.
+- `Sources/AgentsBar/StatusItemController+Menu.swift`: missing/error-only menu-open refresh.
+- `Sources/AgentsBar/StatusItemController+MenuInteractionRefresh.swift`: deferred non-interactive refresh safety.
+- `Tests/AgentsBarTests/StatusMenuInstantOpenTests.swift`: fresh, missing, in-flight, and close-during-refresh contracts.
 
 Adaptive changes only the first provider-refresh path. The local scanner supplies an in-memory scheduling signal; it
 does not fetch provider usage. The change does not alter the menu-open setting, its default, provider selection,
@@ -370,7 +370,7 @@ Replay proves the policy table at reconstructed decision points. It does not rep
 callback, because the frozen trace sampled activity only on decision records. Timer integration tests separately prove
 that a live activity observation can pull a pending 30-minute sleep forward and cannot postpone an earlier refresh.
 
-A 20-run `hyperfine` sample of exact-head `.build/debug/CodexBarCLI sessions --json`, with one attributable Codex
+A 20-run `hyperfine` sample of exact-head `.build/debug/AgentsBarCLI sessions --json`, with one attributable Codex
 session, measured 153.0 ms ± 14.4 ms wall time and 134.3 ms combined user plus system CPU time per invocation. At the
 30-second unconstrained cadence, that CPU figure extrapolates to 6.5 CPU-minutes per day. Agent-aware scans pause under
 Low Power Mode and serious/critical thermal pressure. The CLI process startup is included, so this is a conservative
@@ -378,7 +378,7 @@ same-machine sample for in-process work, not a scanner upper bound or general en
 scanner CPU are reported separately; the replay does not claim net energy savings.
 
 An exact-head synthetic stress fixture then exercised 12 agent-like processes and 512 recent Codex rollout entries.
-After bounding the scanner, 20 runs of `.build/debug/CodexBarCLI sessions --json` measured 231.4 ms ± 12.4 ms wall time
+After bounding the scanner, 20 runs of `.build/debug/AgentsBarCLI sessions --json` measured 231.4 ms ± 12.4 ms wall time
 and 209.3 ms combined user plus system CPU time. At a continuous 30-second cadence that CPU figure extrapolates to 10.1
 CPU-minutes per day. The CLI startup is included. This is a stress sample rather than a population or energy claim, and
 directory metadata enumeration is additionally capped by the shared entry, depth, and time budget.

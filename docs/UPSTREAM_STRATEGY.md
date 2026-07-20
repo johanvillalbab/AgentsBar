@@ -7,8 +7,8 @@ read_when:
 
 # Multi-Upstream Fork Management Strategy
 
-**Fork:** topoffunnel/CodexBar  
-**Upstream 1:** steipete/CodexBar (original)  
+**Fork:** topoffunnel/AgentsBar  
+**Upstream 1:** johanvillalbab/agentsbar (original)  
 **Upstream 2:** nguyenphutrong/quotio (inspiration source)
 
 ---
@@ -41,10 +41,10 @@ read_when:
 
 ```bash
 # Your fork (origin)
-git remote add origin git@github.com:topoffunnel/CodexBar.git
+git remote add origin git@github.com:topoffunnel/AgentsBar.git
 
 # Original upstream (steipete)
-git remote add upstream git@github.com:steipete/CodexBar.git
+git remote add upstream git@github.com:johanvillalbab/agentsbar.git
 
 # Quotio inspiration source
 git remote add quotio git@github.com:nguyenphutrong/quotio.git
@@ -123,7 +123,7 @@ jobs:
       
       - name: Add upstream remotes
         run: |
-          git remote add upstream https://github.com/steipete/CodexBar.git
+          git remote add upstream https://github.com/johanvillalbab/agentsbar.git
           git remote add quotio https://github.com/nguyenphutrong/quotio.git
           git fetch upstream
           git fetch quotio
@@ -147,11 +147,11 @@ jobs:
             
             const body = `## Upstream Changes Detected
             
-            **steipete/CodexBar:** ${upstreamCommits} new commits
+            **johanvillalbab/agentsbar:** ${upstreamCommits} new commits
             **quotio:** ${quotioCommits} new commits (last week)
             
             Review changes:
-            - [steipete commits](https://github.com/steipete/CodexBar/compare/main...upstream/main)
+            - [steipete commits](https://github.com/johanvillalbab/agentsbar/compare/main...upstream/main)
             - [quotio commits](https://github.com/nguyenphutrong/quotio/commits/main)
             
             Run \`./Scripts/review_upstream.sh\` to analyze changes.`;
@@ -234,7 +234,7 @@ git commit -m "feat: implement feature inspired by quotio
 Inspired by quotio's approach to [feature]:
 https://github.com/nguyenphutrong/quotio/commit/abc123
 
-Implemented independently with CodexBar-specific patterns."
+Implemented independently with AgentsBar-specific patterns."
 ```
 
 ---
@@ -282,7 +282,7 @@ echo "1. Cherry-pick your commits (without fork branding)"
 echo "2. Remove any fork-specific code"
 echo "3. Ensure tests pass"
 echo "4. Push: git push origin upstream-pr/$FEATURE_NAME"
-echo "5. Create PR to steipete/CodexBar from GitHub UI"
+echo "5. Create PR to johanvillalbab/agentsbar from GitHub UI"
 ```
 
 ### Cleaning Commits for Upstream
@@ -311,7 +311,7 @@ Tested with multiple account types."
 # Push to your fork
 git push origin upstream-pr/fix-cursor-bonus
 
-# Create PR to steipete/CodexBar via GitHub UI
+# Create PR to johanvillalbab/agentsbar via GitHub UI
 ```
 
 ---
@@ -350,7 +350,7 @@ Adds automatic session restoration on app restart.
 Inspired by quotio's approach:
 https://github.com/nguyenphutrong/quotio/blob/main/...
 
-Implemented independently using CodexBar patterns.
+Implemented independently using AgentsBar patterns.
 ```
 
 ---
@@ -383,11 +383,11 @@ Implemented independently using CodexBar patterns.
 git checkout -b feature/my-improvement
 
 # Commit 1: Core improvement (upstream-suitable)
-git add Sources/CodexBarCore/...
+git add Sources/AgentsBarCore/...
 git commit -m "feat: improve cookie handling"
 
 # Commit 2: Fork-specific enhancements
-git add Sources/CodexBar/About.swift
+git add Sources/AgentsBar/About.swift
 git commit -m "feat: add fork attribution for improvement"
 
 # Merge to main (both commits)
@@ -403,8 +403,8 @@ git cherry-pick <commit-1-hash>  # Only the core improvement
 ### Maintaining Fork Identity
 
 Keep these files fork-specific (never upstream):
-- `Sources/CodexBar/About.swift` (your attribution)
-- `Sources/CodexBar/PreferencesAboutPane.swift` (fork sections)
+- `Sources/AgentsBar/About.swift` (your attribution)
+- `Sources/AgentsBar/PreferencesAboutPane.swift` (fork sections)
 - `README.md` (fork notice)
 - `docs/FORK_*.md` (fork documentation)
 - `FORK_STATUS.md`
@@ -466,7 +466,7 @@ git diff upstream/main
 
 # Push and create PR
 git push origin upstream-pr/fix-cursor-bonus
-# Then create PR on GitHub to steipete/CodexBar
+# Then create PR on GitHub to johanvillalbab/agentsbar
 ```
 
 ### Example 3: Learning from Quotio
@@ -487,7 +487,7 @@ git commit -m "feat: implement multi-account management
 Inspired by quotio's account switching pattern:
 https://github.com/nguyenphutrong/quotio/...
 
-Implemented independently using CodexBar's architecture."
+Implemented independently using AgentsBar's architecture."
 ```
 
 ---
@@ -524,11 +524,11 @@ Implemented independently using CodexBar's architecture."
 ```bash
 # During upstream merge
 git merge upstream/main
-# CONFLICT in Sources/CodexBar/About.swift
+# CONFLICT in Sources/AgentsBar/About.swift
 
 # Keep your fork version for branding files
-git checkout --ours Sources/CodexBar/About.swift
-git add Sources/CodexBar/About.swift
+git checkout --ours Sources/AgentsBar/About.swift
+git add Sources/AgentsBar/About.swift
 
 # Merge other files manually
 # Then continue

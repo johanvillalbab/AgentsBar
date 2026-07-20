@@ -8,7 +8,7 @@ import { localeCatalog, localeMessages } from "../docs/site-locales.mjs";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const indexHtml = fs.readFileSync(path.join(repoRoot, "docs/index.html"), "utf8");
 const providerSource = fs.readFileSync(
-  path.join(repoRoot, "Sources/CodexBarCore/Providers/Providers.swift"),
+  path.join(repoRoot, "Sources/AgentsBarCore/Providers/Providers.swift"),
   "utf8",
 );
 const providerEnumBody = providerSource.match(
@@ -21,8 +21,8 @@ assertEqual(new Set(providerIDs).size, providerIDs.length, "UsageProvider IDs");
 const providerCount = providerIDs.length;
 
 const publicCountFiles = [
-  ["README.md", `alt="CodexBar — every AI coding limit in your menu bar. ${providerCount} providers."`],
-  ["docs/providers.md", `CodexBar currently registers ${providerCount} provider IDs.`],
+  ["README.md", `alt="AgentsBar — every AI coding limit in your menu bar. ${providerCount} providers."`],
+  ["docs/providers.md", `AgentsBar currently registers ${providerCount} provider IDs.`],
   ["docs/social.html", `<strong>${providerCount} providers</strong>`],
   ["docs/llms.txt", `across ${providerCount} providers`],
 ];
@@ -50,7 +50,7 @@ const expectedCodes = [
 ];
 const catalogCodes = localeCatalog.map((locale) => locale.code);
 const appLanguageSource = fs.readFileSync(
-  path.join(repoRoot, "Sources/CodexBar/PreferencesGeneralPane.swift"),
+  path.join(repoRoot, "Sources/AgentsBar/PreferencesGeneralPane.swift"),
   "utf8",
 );
 
@@ -96,7 +96,7 @@ const hasLanguagePicker = indexHtml.includes('id="language-picker-list"')
 assert(hasLanguagePicker, 'site must include the language picker backed by localeCatalog');
 
 for (const code of catalogCodes) {
-  assert(indexHtml.includes(`href="https://codexbar.app/?lang=${code}"`), `missing hreflang URL for ${code}`);
+  assert(indexHtml.includes(`href="https://agentsbar.app/?lang=${code}"`), `missing hreflang URL for ${code}`);
 }
 
 const providerCards = [...indexHtml.matchAll(/<li class="provider-card"([^>]*)>([\s\S]*?)<\/li>/g)];

@@ -31,8 +31,8 @@ Usage source picker:
 - Preferences → Providers → Claude → Usage source (Auto/OAuth/Web/CLI).
 
 Admin API key setup:
-- Preferences → Providers → Claude → Admin API key, stored in `~/.codexbar/config.json`.
-- CLI/env: `printf '%s' "$ANTHROPIC_ADMIN_KEY" | codexbar config set-api-key --provider claude --stdin`.
+- Preferences → Providers → Claude → Admin API key, stored in `~/.config/agentsbar/config.json`.
+- CLI/env: `printf '%s' "$ANTHROPIC_ADMIN_KEY" | agentsbar config set-api-key --provider claude --stdin`.
 - Token accounts can also hold `sk-ant-admin...` keys; they route to the Admin API instead of cookie/OAuth usage.
 - Environment fallback: `ANTHROPIC_ADMIN_KEY`.
 
@@ -62,10 +62,10 @@ Admin API key setup:
 
 ## OAuth API (preferred)
 - Credentials:
-  - CodexBar OAuth cache when available.
+  - AgentsBar OAuth cache when available.
   - File fallback: `~/.claude/.credentials.json`.
   - Claude CLI Keychain bootstrap/repair fallback: `Claude Code-credentials`.
-- On Claude Code 2.1.x, `Claude Code-credentials` may contain only MCP server OAuth state (`mcpOAuth`) with no `claudeAiOauth`. CodexBar treats that as an OAuth configuration error, does not run background delegated `claude /status` refresh, and surfaces re-auth guidance. Use Web or CLI usage source, or restore a valid Claude OAuth keychain entry. See #1844.
+- On Claude Code 2.1.x, `Claude Code-credentials` may contain only MCP server OAuth state (`mcpOAuth`) with no `claudeAiOauth`. AgentsBar treats that as an OAuth configuration error, does not run background delegated `claude /status` refresh, and surfaces re-auth guidance. Use Web or CLI usage source, or restore a valid Claude OAuth keychain entry. See #1844.
 - Requires `user:profile` scope (CLI tokens with only `user:inference` cannot call usage).
 - Endpoint:
   - `GET https://api.anthropic.com/api/oauth/usage`
@@ -89,7 +89,7 @@ Admin API key setup:
 ## Web API (cookies)
 - Preferences → Providers → Claude → Cookie source (Automatic or Manual).
 - Manual mode accepts a `Cookie:` header from a claude.ai request.
-- Multi-account manual tokens: add entries to `~/.codexbar/config.json` (`tokenAccounts`) and set Claude cookies to
+- Multi-account manual tokens: add entries to `~/.config/agentsbar/config.json` (`tokenAccounts`) and set Claude cookies to
   Manual. The menu can show all accounts stacked or a switcher bar (Preferences → Advanced → Display).
 - Claude token accounts accept either `sessionKey` cookies or OAuth access tokens (`sk-ant-oat...`). OAuth-token
   accounts route to the OAuth path and disable cookie mode; session-key or cookie-header accounts stay in manual
@@ -102,7 +102,7 @@ Admin API key setup:
 - Domain: `claude.ai`.
 - Cookie name required:
   - `sessionKey` (value prefix `sk-ant-...`).
-- Cached cookies: Keychain cache `com.steipete.codexbar.cache` (account `cookie.claude`, source + timestamp).
+- Cached cookies: Keychain cache `com.steipete.agentsbar.cache` (account `cookie.claude`, source + timestamp).
   Reused before re-importing from browsers.
 - API calls (all include `Cookie: sessionKey=<value>`):
   - `GET https://claude.ai/api/organizations` → org UUID.
@@ -122,21 +122,21 @@ The accepted multi-account design in
 
 - Setup: Preferences → Providers → Claude → "Read accounts from claude-swap", then set the path to the
   [`cswap`](https://github.com/realiti4/claude-swap) executable (for example `~/.local/bin/cswap`).
-- Behavior: on each Claude refresh, CodexBar runs `cswap --list --json` independently of the ambient Claude fetch (no
+- Behavior: on each Claude refresh, AgentsBar runs `cswap --list --json` independently of the ambient Claude fetch (no
   shell, fixed arguments, bounded runtime and output), requires `schemaVersion == 1`, and parses only slot number,
   active state, usage status, email (display only), the 5-hour/7-day windows, and optional display-only model-scoped
   weekly windows from `usage.scoped`.
-- Display: when claude-swap reports more than one account, the Claude menu and `codexbar cards` show one card per
+- Display: when claude-swap reports more than one account, the Claude menu and `agentsbar cards` show one card per
   account (active account first, then numeric slot) instead of ambient/token-account Claude cards. To use this
   presentation with one account, enable “Show account card when only one account is available” or set
   `claudeSwapShowSingleAccount: true` on the Claude provider in the resolved config file (normally
-  `~/.config/codexbar/config.json`; legacy installs may use `~/.codexbar/config.json`). The option defaults off,
+  `~/.config/agentsbar/config.json`; legacy installs may use `~/.codexbar/config.json` or `~/.config/codexbar/config.json`). The option defaults off,
   zero accounts still use the ambient presentation, and account identity is `claude-swap:<slot>`, never the display
   email.
 - Terminal scope: this automatic precedence is cards-only and works on every supported CLI platform. An explicit
   Claude provider or `--source auto` remains eligible, while `--account`, `--account-index`, `--all-accounts`, and
-  explicit non-auto source flags bypass the adapter. `codexbar usage` and `codexbar serve` are unchanged.
-- Isolation: CodexBar never reads claude-swap or Claude Code credential storage for this feature; the
+  explicit non-auto source flags bypass the adapter. `agentsbar usage` and `agentsbar serve` are unchanged.
+- Isolation: AgentsBar never reads claude-swap or Claude Code credential storage for this feature; the
   subprocess handles its own credential access. In the app, adapter failures keep the last successful accounts as
   stale data, surface the error in provider settings, and never affect the ambient Claude usage card. In terminal
   cards, a list failure retains the current ambient output, adds a distinct `Claude (claude-swap)` footer entry, and
@@ -166,9 +166,9 @@ Model-scoped weekly-window proof (synthetic data, no real accounts or credential
 ## CLI PTY (fallback)
 - Runs `claude` in a PTY session (`ClaudeCLISession`).
 - Default behavior: exit after each probe; Debug → "Keep CLI sessions alive" keeps it running between probes.
-- Probe working directory: `~/Library/Application Support/CodexBar/ClaudeProbe` with local Claude settings that disable
+- Probe working directory: `~/Library/Application Support/AgentsBar/ClaudeProbe` with local Claude settings that disable
   deep-link URL handler registration during headless probes.
-- After transient probes exit, CodexBar removes Claude Code `.jsonl` session artifacts for that dedicated
+- After transient probes exit, AgentsBar removes Claude Code `.jsonl` session artifacts for that dedicated
   `ClaudeProbe` project directory so background `/usage` polling does not clutter the user's Claude project history.
 - Command flow:
   1) Start CLI with `--allowed-tools ""` (no tools).
@@ -181,7 +181,7 @@ Model-scoped weekly-window proof (synthetic data, no real accounts or credential
   - Parses `Account:` and `Org:` lines when present.
   - Surfaces CLI errors (e.g. token expired) directly.
   - Some Education and organization-managed subscriptions return only a subscription notice, with no numeric
-    session or weekly quota fields. CodexBar reports those limits as unavailable, keeps local cost/token history
+    session or weekly quota fields. AgentsBar reports those limits as unavailable, keeps local cost/token history
     visible, and never derives quota percentages from spend or token totals.
 
 ## Cost usage (local log scan)
@@ -209,15 +209,15 @@ Model-scoped weekly-window proof (synthetic data, no real accounts or credential
     single pi-compatible session can contribute to multiple models/days.
   - Matching assistant entry IDs within the same session are counted once across roots; distinct turns are retained.
 - Cache:
-  - Native + merged provider cache: `~/Library/Caches/CodexBar/cost-usage/claude-v2.json`
-  - pi-compatible session cache: `~/Library/Caches/CodexBar/cost-usage/pi-sessions-v7.json`
+  - Native + merged provider cache: `~/Library/Caches/AgentsBar/cost-usage/claude-v2.json`
+  - pi-compatible session cache: `~/Library/Caches/AgentsBar/cost-usage/pi-sessions-v7.json`
 
 ## Key files
-- OAuth: `Sources/CodexBarCore/Providers/Claude/ClaudeOAuth/*`
-- Web API: `Sources/CodexBarCore/Providers/Claude/ClaudeWeb/ClaudeWebAPIFetcher.swift`
-- CLI PTY: `Sources/CodexBarCore/Providers/Claude/ClaudeStatusProbe.swift`,
-  `Sources/CodexBarCore/Providers/Claude/ClaudeCLISession.swift`
-- Cost usage: `Sources/CodexBarCore/CostUsageFetcher.swift`,
-  `Sources/CodexBarCore/PiSessionCostScanner.swift`,
-  `Sources/CodexBarCore/PiSessionCostCache.swift`,
-  `Sources/CodexBarCore/Vendored/CostUsage/*`
+- OAuth: `Sources/AgentsBarCore/Providers/Claude/ClaudeOAuth/*`
+- Web API: `Sources/AgentsBarCore/Providers/Claude/ClaudeWeb/ClaudeWebAPIFetcher.swift`
+- CLI PTY: `Sources/AgentsBarCore/Providers/Claude/ClaudeStatusProbe.swift`,
+  `Sources/AgentsBarCore/Providers/Claude/ClaudeCLISession.swift`
+- Cost usage: `Sources/AgentsBarCore/CostUsageFetcher.swift`,
+  `Sources/AgentsBarCore/PiSessionCostScanner.swift`,
+  `Sources/AgentsBarCore/PiSessionCostCache.swift`,
+  `Sources/AgentsBarCore/Vendored/CostUsage/*`

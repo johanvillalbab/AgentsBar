@@ -1,12 +1,12 @@
 # Agent Sessions (prototype)
 
-Track live Codex + Claude Code agent sessions — local Mac first, other Macs on the tailnet second — and surface them in the CodexBar menu with click-to-focus of the owning terminal window.
+Track live Codex + Claude Code agent sessions — local Mac first, other Macs on the tailnet second — and surface them in the AgentsBar menu with click-to-focus of the owning terminal window.
 
-## Why in CodexBar
+## Why in AgentsBar
 
-CodexBar already parses `~/.claude/projects` JSONL (cost scanner) and ships a bundled CLI on macOS + Linux. Sessions reuse both: the local scanner feeds the menu UI, and the same scanner exposed as `codexbar sessions --json` is what remote Macs run over SSH. No daemon, no new app.
+AgentsBar already parses `~/.claude/projects` JSONL (cost scanner) and ships a bundled CLI on macOS + Linux. Sessions reuse both: the local scanner feeds the menu UI, and the same scanner exposed as `agentsbar sessions --json` is what remote Macs run over SSH. No daemon, no new app.
 
-## Data model (CodexBarCore)
+## Data model (AgentsBarCore)
 
 ```swift
 public struct AgentSession: Codable, Sendable, Identifiable {
@@ -30,7 +30,7 @@ public struct AgentSession: Codable, Sendable, Identifiable {
 
 `active` = last activity ≤ 120 s ago. `idle` = live process (or recent file) with older activity. Constants live in one `SessionScanConfig` struct (activeWindow 120 s, fileOnlyWindow 30 min) so thresholds are tunable/testable.
 
-## Local scanner (CodexBarCore, no new deps)
+## Local scanner (AgentsBarCore, no new deps)
 
 `LocalAgentSessionScanner` combines two signals:
 
@@ -45,22 +45,22 @@ public struct AgentSession: Codable, Sendable, Identifiable {
 
 Scanner is `Sendable`, pure functions where possible; ps/lsof output parsing lives in dedicated parser types fed by strings so tests use fixtures.
 
-## CLI (CodexBarCLI)
+## CLI (AgentsBarCLI)
 
-- `codexbar sessions` — table; `--json` — `[AgentSession]` (stable field names above; ISO-8601 dates).
-- `codexbar sessions focus <id>` — macOS only: focus the session's terminal window (see Focus). Exit 1 if id unknown, 2 if focus failed.
+- `agentsbar sessions` — table; `--json` — `[AgentSession]` (stable field names above; ISO-8601 dates).
+- `agentsbar sessions focus <id>` — macOS only: focus the session's terminal window (see Focus). Exit 1 if id unknown, 2 if focus failed.
 - Follows existing `CLI*Command.swift` conventions. Works on Linux for listing (ps/proc paths guarded), focus is Darwin-only.
 
-## Remote hosts (CodexBarCore + app)
+## Remote hosts (AgentsBarCore + app)
 
 `RemoteSessionFetcher`:
 
 - Host list = manual entries (settings, ssh destinations like `steipete@clawmac`) ∪ automatic Tailscale discovery (no-op when tailscale is absent): run `tailscale status --json` (PATH, then `/Applications/Tailscale.app/Contents/MacOS/Tailscale`), take online peers with `"OS": "macOS"|"linux"`, use first `DNSName` label as host. Local host excluded.
-- Fetch per host (parallel, 5 s budget): `ssh -o BatchMode=yes -o ConnectTimeout=3 <host> sh -lc 'codexbar sessions --json'` with fallback to the bundled app CLI path (resolve the canonical bundled location from `Scripts/package_app.sh` and hardcode it as fallback: `… || <bundled-path> sessions --json`). Host errors are non-fatal: host shown as unreachable, others still render.
-- Remote focus: fire-and-forget `ssh <host> sh -lc 'codexbar sessions focus <id>'`.
+- Fetch per host (parallel, 5 s budget): `ssh -o BatchMode=yes -o ConnectTimeout=3 <host> sh -lc 'agentsbar sessions --json'` with fallback to the bundled app CLI path (resolve the canonical bundled location from `Scripts/package_app.sh` and hardcode it as fallback: `… || <bundled-path> sessions --json`). Host errors are non-fatal: host shown as unreachable, others still render.
+- Remote focus: fire-and-forget `ssh <host> sh -lc 'agentsbar sessions focus <id>'`.
 - Refresh: local scan every 30 s while the status item exists (cheap), remote every 60 s and immediately on menu open; both skipped when the feature is off. Reuse existing refresh loop plumbing rather than new timers if it fits.
 
-## Menu UI (CodexBar app)
+## Menu UI (AgentsBar app)
 
 - New menu section **Agent Sessions (N)** (N = total, all hosts) above the settings/footer area, built through the existing `MenuDescriptor`-style seam so it's testable headless.
 - Local sessions first, then one group per remote host (`clawmac — 2`, unreachable hosts greyed with a tooltip). Row: state dot (● active / ○ idle), provider glyph, `projectName — provider · source · 12m`.
@@ -77,7 +77,7 @@ Scanner is `Sendable`, pure functions where possible; ps/lsof output parsing liv
 
 tmux pane / terminal-tab precision is out of scope for the prototype.
 
-## Tests (Tests/CodexBarTests)
+## Tests (Tests/AgentsBarTests)
 
 Fixture-driven, no live processes, no Keychain/AX:
 
@@ -95,4 +95,4 @@ Claude.ai chat sessions; Codex cloud tasks; historical session browsing/analytic
 
 ## Proof
 
-`make check` clean; `make test` (or focused `swift test --filter` covering the new tests) green; `swift run CodexBarCLI sessions --json` produces plausible output on this Mac.
+`make check` clean; `make test` (or focused `swift test --filter` covering the new tests) green; `swift run AgentsBarCLI sessions --json` produces plausible output on this Mac.

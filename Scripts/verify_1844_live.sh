@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Isolated live verification for CodexBar #1844 / PR #1848.
+# Isolated live verification for AgentsBar #1844 / PR #1848.
 # Uses only synthetic credentials under a disposable HOME and keychain.
 set -euo pipefail
 
@@ -8,14 +8,14 @@ cd "$ROOT"
 
 log() { printf '[verify-1844] %s\n' "$*"; }
 
-ARTIFACT="$(mktemp -d "${TMPDIR:-/tmp}/codexbar-1844-verify.XXXXXX")"
+ARTIFACT="$(mktemp -d "${TMPDIR:-/tmp}/agentsbar-1844-verify.XXXXXX")"
 chmod 700 "$ARTIFACT"
 HOME_FIXTURE="$ARTIFACT/home"
 KEYCHAIN="$ARTIFACT/claude-fixture.keychain-db"
-KEYCHAIN_PASSWORD="codexbar-1844-synthetic-fixture"
+KEYCHAIN_PASSWORD="agentsbar-1844-synthetic-fixture"
 CONFIG="$ARTIFACT/config.json"
-CLI="${CODEXBAR_CLI:-$ROOT/CodexBar.app/Contents/Helpers/CodexBarCLI}"
-APP="${CODEXBAR_APP_BINARY:-$ROOT/CodexBar.app/Contents/MacOS/CodexBar}"
+CLI="${AGENTSBAR_CLI:-$ROOT/AgentsBar.app/Contents/Helpers/AgentsBarCLI}"
+APP="${AGENTSBAR_APP_BINARY:-$ROOT/AgentsBar.app/Contents/MacOS/AgentsBar}"
 MCP_PAYLOAD='{"mcpOAuth":{"plugin:synthetic":{"accessToken":"synthetic-mcp-token"}}}'
 EXPIRED_PAYLOAD='{"claudeAiOauth":{"accessToken":"synthetic-expired-token","expiresAt":1000,"scopes":["user:profile"],"refreshToken":"synthetic-refresh-token"}}'
 
@@ -57,20 +57,20 @@ printf '%s\n' '{"version":1,"providers":[{"id":"claude","enabled":true,"source":
 chmod 600 "$CONFIG"
 printf '%s\n' \
   '#!/usr/bin/env bash' \
-  'printf "args:" >>"$CODEXBAR_CLAUDE_INVOCATIONS"' \
-  'printf " %q" "$@" >>"$CODEXBAR_CLAUDE_INVOCATIONS"' \
-  'printf "\\n" >>"$CODEXBAR_CLAUDE_INVOCATIONS"' \
+  'printf "args:" >>"$AGENTSBAR_CLAUDE_INVOCATIONS"' \
+  'printf " %q" "$@" >>"$AGENTSBAR_CLAUDE_INVOCATIONS"' \
+  'printf "\\n" >>"$AGENTSBAR_CLAUDE_INVOCATIONS"' \
   'if [[ "$*" == "auth status --json" ]]; then printf "{\"loggedIn\":true}\\n"; exit 0; fi' \
   'if [[ "$*" == "--version" ]]; then printf "2.1.0\\n"; exit 0; fi' \
   'if IFS= read -r line; then' \
-  '  printf "stdin:%s\\n" "$line" >>"$CODEXBAR_CLAUDE_INVOCATIONS"' \
-  '  if [[ "$line" == *"/status"* ]]; then printf touched >"$CODEXBAR_CLAUDE_TOUCH_CANARY"; fi' \
+  '  printf "stdin:%s\\n" "$line" >>"$AGENTSBAR_CLAUDE_INVOCATIONS"' \
+  '  if [[ "$line" == *"/status"* ]]; then printf touched >"$AGENTSBAR_CLAUDE_TOUCH_CANARY"; fi' \
   'fi' \
   'exit 99' \
   >"$ARTIFACT/bin/claude"
 printf '%s\n' \
   '#!/usr/bin/env bash' \
-  'printf touched >"$CODEXBAR_OPEN_TOUCH_CANARY"' \
+  'printf touched >"$AGENTSBAR_OPEN_TOUCH_CANARY"' \
   'exit 99' \
   >"$ARTIFACT/bin/open"
 chmod 700 "$ARTIFACT/bin/claude" "$ARTIFACT/bin/open"
@@ -80,7 +80,7 @@ chmod 700 "$ARTIFACT/bin/claude" "$ARTIFACT/bin/open"
 /usr/bin/security set-keychain-settings -t 3600 "$KEYCHAIN"
 /usr/bin/security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
 /usr/bin/security add-generic-password \
-  -a codexbar-verify-1844 \
+  -a agentsbar-verify-1844 \
   -s 'Claude Code-credentials' \
   -w "$MCP_PAYLOAD" \
   -A \
@@ -110,13 +110,13 @@ set +e
   env \
     HOME="$HOME_FIXTURE" \
     CFFIXED_USER_HOME="$HOME_FIXTURE" \
-    CODEXBAR_CONFIG="$CONFIG" \
-    CODEXBAR_DISABLE_KEYCHAIN_ACCESS=1 \
-    CODEXBAR_CLAUDE_SECURITY_CLI_KEYCHAIN="$KEYCHAIN" \
-    CODEXBAR_CLAUDE_TOUCH_CANARY="$CANARY" \
-    CODEXBAR_CLAUDE_INVOCATIONS="$INVOCATIONS" \
-    CODEXBAR_OPEN_TOUCH_CANARY="$OPEN_CANARY" \
-    CODEXBAR_DEBUG_CLAUDE_OAUTH_FLOW=1 \
+    AGENTSBAR_CONFIG="$CONFIG" \
+    AGENTSBAR_DISABLE_KEYCHAIN_ACCESS=1 \
+    AGENTSBAR_CLAUDE_SECURITY_CLI_KEYCHAIN="$KEYCHAIN" \
+    AGENTSBAR_CLAUDE_TOUCH_CANARY="$CANARY" \
+    AGENTSBAR_CLAUDE_INVOCATIONS="$INVOCATIONS" \
+    AGENTSBAR_OPEN_TOUCH_CANARY="$OPEN_CANARY" \
+    AGENTSBAR_DEBUG_CLAUDE_OAUTH_FLOW=1 \
     CLAUDE_CLI_PATH="$ARTIFACT/bin/claude" \
     PATH="$ARTIFACT/bin:/usr/bin:/bin:/usr/sbin:/sbin" \
     "$CLI" usage --provider claude --source oauth --format json --pretty --log-level debug \
@@ -135,7 +135,7 @@ CLI_STATUS=$?
 set -e
 
 {
-  echo "# CodexBar #1844 isolated E2E verification"
+  echo "# AgentsBar #1844 isolated E2E verification"
   echo "date: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo "candidate: $(git rev-parse HEAD)"
   echo "packaged-cli: $CLI"
@@ -191,13 +191,13 @@ APP_STDERR="$ARTIFACT/app-stderr.log"
   env \
     HOME="$HOME_FIXTURE" \
     CFFIXED_USER_HOME="$HOME_FIXTURE" \
-    CODEXBAR_CONFIG="$CONFIG" \
-    CODEXBAR_DISABLE_KEYCHAIN_ACCESS=1 \
-    CODEXBAR_CLAUDE_SECURITY_CLI_KEYCHAIN="$KEYCHAIN" \
-    CODEXBAR_CLAUDE_TOUCH_CANARY="$CANARY" \
-    CODEXBAR_CLAUDE_INVOCATIONS="$INVOCATIONS" \
-    CODEXBAR_OPEN_TOUCH_CANARY="$OPEN_CANARY" \
-    CODEXBAR_DEBUG_CLAUDE_OAUTH_FLOW=1 \
+    AGENTSBAR_CONFIG="$CONFIG" \
+    AGENTSBAR_DISABLE_KEYCHAIN_ACCESS=1 \
+    AGENTSBAR_CLAUDE_SECURITY_CLI_KEYCHAIN="$KEYCHAIN" \
+    AGENTSBAR_CLAUDE_TOUCH_CANARY="$CANARY" \
+    AGENTSBAR_CLAUDE_INVOCATIONS="$INVOCATIONS" \
+    AGENTSBAR_OPEN_TOUCH_CANARY="$OPEN_CANARY" \
+    AGENTSBAR_DEBUG_CLAUDE_OAUTH_FLOW=1 \
     CLAUDE_CLI_PATH="$ARTIFACT/bin/claude" \
     PATH="$ARTIFACT/bin:/usr/bin:/bin:/usr/sbin:/sbin" \
     "$APP" >"$APP_STDOUT" 2>"$APP_STDERR"

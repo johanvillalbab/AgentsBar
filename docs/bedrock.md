@@ -8,16 +8,16 @@ read_when:
 
 # AWS Bedrock provider
 
-CodexBar reads AWS Cost Explorer for Bedrock spend and can compare the current month against an optional budget. When
+AgentsBar reads AWS Cost Explorer for Bedrock spend and can compare the current month against an optional budget. When
 permitted, it also reads CloudWatch for rolling 14-day Claude token and request totals in the configured region.
 
 ## Authentication
 
-CodexBar supports two authentication modes, selected in Preferences → Providers → AWS Bedrock → Authentication.
+AgentsBar supports two authentication modes, selected in Preferences → Providers → AWS Bedrock → Authentication.
 
 ### Access keys (default)
 
-Provide static AWS credentials through Settings or the environment inherited by CodexBar/the CLI:
+Provide static AWS credentials through Settings or the environment inherited by AgentsBar/the CLI:
 
 ```bash
 export AWS_ACCESS_KEY_ID="..."
@@ -29,19 +29,19 @@ Optional:
 
 ```bash
 export AWS_SESSION_TOKEN="..."
-export CODEXBAR_BEDROCK_BUDGET="250"
+export AGENTSBAR_BEDROCK_BUDGET="250"
 ```
 
 ### AWS profile
 
 Resolve credentials from a named profile in `~/.aws/config` / `~/.aws/credentials` instead of pasting keys. Set the
-profile name in Settings (or via `AWS_PROFILE`). CodexBar shells out to the AWS CLI
+profile name in Settings (or via `AWS_PROFILE`). AgentsBar shells out to the AWS CLI
 (`aws configure export-credentials --profile <name>`), so this works with **SSO**, **assume-role**,
 `credential_process`, and MFA-cached profiles — not just static credentials.
 
 Requirements:
 
-- AWS CLI v2 on your `PATH` (CodexBar also checks `/opt/homebrew/bin/aws`, `/usr/local/bin/aws`, and `~/.local/bin/aws`).
+- AWS CLI v2 on your `PATH` (AgentsBar also checks `/opt/homebrew/bin/aws`, `/usr/local/bin/aws`, and `~/.local/bin/aws`).
   Override the location with `AWS_CLI_PATH` if it lives elsewhere.
 - For SSO profiles, an active session (`aws sso login --profile <name>`). Credentials are resolved fresh on each
   refresh; the AWS CLI caches the SSO token, so this does not re-prompt unless the session has expired.
@@ -52,7 +52,7 @@ The profile's region is read automatically (`aws configure get region`); leave t
 Relevant environment variables:
 
 ```bash
-export CODEXBAR_BEDROCK_AUTH_MODE="profile"   # set automatically by Settings; "keys" or "profile"
+export AGENTSBAR_BEDROCK_AUTH_MODE="profile"   # set automatically by Settings; "keys" or "profile"
 export AWS_PROFILE="work"
 export AWS_CLI_PATH="/opt/homebrew/bin/aws"   # optional override
 ```
@@ -68,9 +68,9 @@ tracking continue unchanged.
 - Usage: current-month Bedrock spend and historical daily cost buckets.
 - Claude activity: rolling 14-day input tokens, output tokens, and requests from the configured region's `AWS/Bedrock`
   CloudWatch metrics. Other model families are excluded.
-- Budget: `CODEXBAR_BEDROCK_BUDGET`, when set to a positive dollar amount.
-- Test override: `CODEXBAR_BEDROCK_API_URL` replaces the Cost Explorer endpoint; use HTTPS or loopback HTTP.
-- Test override: `CODEXBAR_BEDROCK_CLOUDWATCH_API_URL` replaces the CloudWatch endpoint; use HTTPS or loopback HTTP.
+- Budget: `AGENTSBAR_BEDROCK_BUDGET`, when set to a positive dollar amount.
+- Test override: `AGENTSBAR_BEDROCK_API_URL` replaces the Cost Explorer endpoint; use HTTPS or loopback HTTP.
+- Test override: `AGENTSBAR_BEDROCK_CLOUDWATCH_API_URL` replaces the CloudWatch endpoint; use HTTPS or loopback HTTP.
 
 ## Display
 
@@ -82,15 +82,15 @@ tracking continue unchanged.
 ## CLI
 
 ```bash
-codexbar --provider bedrock --source api
-codexbar --provider bedrock --format json --pretty
+agentsbar --provider bedrock --source api
+agentsbar --provider bedrock --format json --pretty
 ```
 
 ## Troubleshooting
 
 ### "No AWS Bedrock cost data available"
 
-- Confirm the credentials are visible to CodexBar.
+- Confirm the credentials are visible to AgentsBar.
 - Confirm the AWS account has Cost Explorer enabled.
 - Confirm the IAM principal can call `ce:GetCostAndUsage`.
 - To include Claude token/request totals, confirm the principal can call `cloudwatch:GetMetricData` in the configured
@@ -105,17 +105,17 @@ credentials) and retry.
 
 ### "AWS CLI not found"
 
-Profile mode requires AWS CLI v2. Install it (e.g. `brew install awscli`) or point CodexBar at the binary with
+Profile mode requires AWS CLI v2. Install it (e.g. `brew install awscli`) or point AgentsBar at the binary with
 `AWS_CLI_PATH`.
 
 ### Wrong region
 
-Set `AWS_REGION` or `AWS_DEFAULT_REGION`. Bedrock usage is regional, but Cost Explorer itself is account-level; CodexBar still needs a signing region for the request.
+Set `AWS_REGION` or `AWS_DEFAULT_REGION`. Bedrock usage is regional, but Cost Explorer itself is account-level; AgentsBar still needs a signing region for the request.
 
 ## Key files
 
-- `Sources/CodexBarCore/Providers/Bedrock/BedrockProviderDescriptor.swift`
-- `Sources/CodexBarCore/Providers/Bedrock/BedrockSettingsReader.swift`
-- `Sources/CodexBarCore/Providers/Bedrock/BedrockProfileCredentialProvider.swift`
-- `Sources/CodexBarCore/Providers/Bedrock/BedrockUsageStats.swift`
-- `Sources/CodexBarCore/Providers/Bedrock/BedrockAWSSigner.swift`
+- `Sources/AgentsBarCore/Providers/Bedrock/BedrockProviderDescriptor.swift`
+- `Sources/AgentsBarCore/Providers/Bedrock/BedrockSettingsReader.swift`
+- `Sources/AgentsBarCore/Providers/Bedrock/BedrockProfileCredentialProvider.swift`
+- `Sources/AgentsBarCore/Providers/Bedrock/BedrockUsageStats.swift`
+- `Sources/AgentsBarCore/Providers/Bedrock/BedrockAWSSigner.swift`

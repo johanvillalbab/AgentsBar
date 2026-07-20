@@ -1,7 +1,7 @@
 import Foundation
 import Testing
-@testable import CodexBarCLI
-@testable import CodexBarCore
+@testable import AgentsBarCLI
+@testable import AgentsBarCore
 
 @Suite(.serialized)
 struct PlatformGatingTests {
@@ -16,13 +16,13 @@ struct PlatformGatingTests {
 
     @Test
     func ampAutoSource_doesNotRequireWebSupport() {
-        #expect(!CodexBarCLI.sourceModeRequiresWebSupport(.auto, provider: .amp))
+        #expect(!AgentsBarCLI.sourceModeRequiresWebSupport(.auto, provider: .amp))
     }
 
     @Test
     func claudeAutoSource_allowsPlannerToFallBackToCLI() {
-        #expect(!CodexBarCLI.sourceModeRequiresWebSupport(.auto, provider: .claude))
-        #expect(CodexBarCLI.sourceModeRequiresWebSupport(.web, provider: .claude))
+        #expect(!AgentsBarCLI.sourceModeRequiresWebSupport(.auto, provider: .claude))
+        #expect(AgentsBarCLI.sourceModeRequiresWebSupport(.web, provider: .claude))
     }
 
     @Test
@@ -136,13 +136,13 @@ struct PlatformGatingTests {
 
     @Test
     func claudeOAuthUsageDoesNotDetectCLIVersion() {
-        #expect(!CodexBarCLI.shouldDetectVersion(
+        #expect(!AgentsBarCLI.shouldDetectVersion(
             provider: .claude,
             result: self.makeResult(kind: .oauth)))
-        #expect(CodexBarCLI.shouldDetectVersion(
+        #expect(AgentsBarCLI.shouldDetectVersion(
             provider: .claude,
             result: self.makeResult(kind: .cli)))
-        #expect(CodexBarCLI.shouldDetectVersion(
+        #expect(AgentsBarCLI.shouldDetectVersion(
             provider: .codex,
             result: self.makeResult(kind: .oauth)))
     }
