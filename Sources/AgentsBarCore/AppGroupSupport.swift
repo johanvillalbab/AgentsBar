@@ -265,7 +265,9 @@ public enum AppGroupSupport {
                 at: sourceDirectory,
                 includingPropertiesForKeys: nil)
             for item in contents {
-                let destination = destinationDirectory.appendingPathComponent(item.lastPathComponent, isDirectory: false)
+                let destination = destinationDirectory.appendingPathComponent(
+                    item.lastPathComponent,
+                    isDirectory: false)
                 guard !fileManager.fileExists(atPath: destination.path) else { continue }
                 try fileManager.copyItem(at: item, to: destination)
             }

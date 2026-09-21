@@ -29,7 +29,8 @@ struct ZenMuxProviderImplementation: ProviderImplementation {
             ProviderSettingsFieldDescriptor(
                 id: "zenmux-management-api-key",
                 title: "Management API key",
-                subtitle: "Stored in ~/.config/agentsbar/config.json. Standard ZenMux inference API keys are not supported.",
+                subtitle: "Stored in ~/.config/agentsbar/config.json. "
+                    + "Standard ZenMux inference API keys are not supported.",
                 kind: .secure,
                 placeholder: "ZenMux management key…",
                 binding: context.stringBinding(\.zenMuxManagementAPIKey),
