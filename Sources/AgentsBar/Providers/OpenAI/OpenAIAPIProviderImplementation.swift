@@ -30,8 +30,9 @@ struct OpenAIAPIProviderImplementation: ProviderImplementation {
             ProviderSettingsFieldDescriptor(
                 id: "openai-api-key",
                 title: "Admin API key",
-                subtitle: "Stored in ~/.config/agentsbar/config.json. OPENAI_ADMIN_KEY is required for organization usage; " +
-                    "legacy/user keys only get a best-effort balance fallback.",
+                subtitle: "Stored in ~/.config/agentsbar/config.json. "
+                    + "OPENAI_ADMIN_KEY is required for organization usage; "
+                    + "legacy/user keys only get a best-effort balance fallback.",
                 kind: .secure,
                 placeholder: "sk-admin-...",
                 binding: context.stringBinding(\.openAIAPIKey),

@@ -231,7 +231,8 @@ enum MenuBarVisibilityWatcher {
         alert.messageText = L("AgentsBar can't show its menu bar icon")
         alert.informativeText = L(
             "macOS Tahoe can block menu bar apps in System Settings → Menu Bar → Allow in the Menu Bar. "
-                + "AgentsBar is running, but macOS may be hiding its icon. Open Menu Bar settings and turn AgentsBar on.")
+                + "AgentsBar is running, but macOS may be hiding its icon. "
+                + "Open Menu Bar settings and turn AgentsBar on.")
         alert.alertStyle = .warning
         alert.addButton(withTitle: L("Open Menu Bar Settings"))
         alert.addButton(withTitle: L("Dismiss"))
